@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "es2016",
+    "module": "CommonJS",
+    "strict": true,
+    "declaration": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+
+    "outDir": "./dist",
+    "rootDir": "./src",
+
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": ["./*"],
+      "@/utils/*": ["utils/*"]
+    }
+  },
+  "include": ["./src/**/*.ts"],
+  "exclude": ["node_modules"]
+}

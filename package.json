@@ -1,0 +1,38 @@
+{
+  "name": "gitip",
+  "version": "1.0.0",
+  "description": "auto generate git issue and pull request",
+  "main": "./src/index.ts",
+  "scripts": {
+    "dev": "ts-node ./src/index.ts",
+    "link": "rm -rf dist && npm run build && npm link",
+    "build": "node script/build.js",
+    "prepublishOnly": "npm run build"
+  },
+  "bin": {
+    "gitip": "NODE_ENV=production ./dist/index.js"
+  },
+  "keywords": [
+    "git",
+    "issue",
+    "pull request"
+  ],
+  "author": {
+    "name": "devAnderson",
+    "email": "chltjdrhd777@gmail.com"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@types/cli-progress": "^3.11.5",
+    "@types/node": "^20.11.30",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "cli-progress": "^3.12.0",
+    "dotenv": "^16.4.5",
+    "enquirer": "^2.4.1",
+    "node-fetch": "^3.3.2",
+    "tsc-alias": "^1.8.8"
+  }
+}
