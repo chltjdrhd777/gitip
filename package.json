@@ -25,10 +25,13 @@
   "devDependencies": {
     "@types/cli-progress": "^3.11.5",
     "@types/node": "^20.11.30",
+    "eslint-plugin-import": "^2.29.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
   },
   "dependencies": {
+    "@inquirer/select": "^2.3.3",
+    "@opentf/cli-pbar": "^0.7.2",
     "cli-progress": "^3.12.0",
     "dotenv": "^16.4.5",
     "enquirer": "^2.4.1",

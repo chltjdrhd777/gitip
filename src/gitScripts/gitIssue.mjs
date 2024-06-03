@@ -1,14 +1,13 @@
+import { exec } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+import { SingleBar } from 'cli-progress';
 import dotenv from 'dotenv';
 dotenv.config();
-
 import inquirer from 'inquirer';
-import { exec } from 'child_process';
 import fetch from 'node-fetch';
-import { SingleBar } from 'cli-progress';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const issueTemplatePath = path.join(__dirname, '..', '.github', 'ISSUE_TEMPLATE');
@@ -61,6 +60,7 @@ const ISSUE_TYPE_MAP = {
 
     //3. check git CLI login status
     const isGithubCLILoggedin = await checkGithubAuth();
+    console.log('isgithubLCi', isGithubCLILoggedin);
     if (!isGithubCLILoggedin) {
       return console.log('🔐 Please auth login first to use gh.\nRun : \x1b[36mgh auth login\x1b[0m');
     }
@@ -302,7 +302,6 @@ async function createGitHubIssue({ issueTemplate, issueTitle }) {
 
     const templateBody = hypenSplittedGroup[2] ?? '';
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     // update requestBody
     requestBody = { ...templateMeatadata, body: templateBody };
   }
