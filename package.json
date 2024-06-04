@@ -4,13 +4,13 @@
   "description": "auto generate git issue and pull request",
   "main": "./src/index.ts",
   "scripts": {
-    "dev": "ts-node ./src/index.ts",
+    "dev": "cross-env NODE_ENV=development ts-node ./src/index.ts",
     "link": "rm -rf dist && npm run build && npm link",
     "build": "node script/build.js",
     "prepublishOnly": "npm run build"
   },
   "bin": {
-    "gitip": "NODE_ENV=production ./dist/index.js"
+    "gitip": "./dist/index.js"
   },
   "keywords": [
     "git",
@@ -25,11 +25,13 @@
   "devDependencies": {
     "@types/cli-progress": "^3.11.5",
     "@types/node": "^20.11.30",
+    "cross-env": "^7.0.3",
     "eslint-plugin-import": "^2.29.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
   },
   "dependencies": {
+    "@inquirer/prompts": "^5.0.5",
     "@inquirer/select": "^2.3.3",
     "@opentf/cli-pbar": "^0.7.2",
     "cli-progress": "^3.12.0",

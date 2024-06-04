@@ -27,16 +27,10 @@ export async function getGitAction() {
       detached: true,
     });
 
-    // command.stdout.on('data', (data) => {
-    //   console.log(data.toString());
-    // });
-
-    // command.stderr.on('data', (data) => {
-    //   console.error(data.toString());
-    // });
-
     command.on('close', (code) => {
-      console.log(`child process exited with code ${code}`);
+      if (process.env.NODE_ENV !== 'production') {
+        console.log(`child process exited with code ${code}`);
+      }
     });
   } catch {}
 }

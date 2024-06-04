@@ -1,5 +1,4 @@
 import select from '@inquirer/select';
-const { prompt } = require('enquirer');
 
 import {
   checkIsRequiredVariablesExist,
@@ -15,6 +14,8 @@ import { readFileSync, readdirSync } from 'fs';
 import path from 'path';
 import { cwd } from 'process';
 import { exec } from 'child_process';
+
+import { input } from '@inquirer/prompts';
 
 /**@PRE_REQUISITE */
 loadEnv();
@@ -114,7 +115,9 @@ const DEFAULT_ISSUE_TEMPLATES: { name: string; value: string }[] = [
       console.log(`✨ your issue is created : ${issueURL}`);
     }
   } catch (err) {
-    console.log('failed to create github issue', err);
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('failed to create github issue', err);
+    }
   }
 })();
 
@@ -155,19 +158,15 @@ async function inquireIssueType() {
 }
 
 async function inquirerIssueTitle() {
-  const response = await prompt({
-    type: 'input',
-    name: 'title',
+  const title = await input({
     message: 'Enter issue title:',
-    validate(value: string) {
-      if (!value) {
-        return 'please enter the title';
-      }
+    validate: (value) => {
+      if (!value) return 'please enter the title';
       return true;
     },
   });
 
-  return response.title;
+  return title;
 }
 
 function getIssueTemplate(url: string) {
