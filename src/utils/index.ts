@@ -7,4 +7,8 @@ export { default as checkoutToTargetBranch } from './checkoutToTargetBranch';
 export { default as findRemoteAlias } from './findRemoteAlias';
 export { default as syncForkBranchAndPullLocalBranch } from './syncForkBranchAndPullLocalBranch';
 export { default as getCurrentBranchName } from './getCurrentBranchName';
+export { default as pushToForkBranch } from './pushToForkBranch';
+export { default as getLatestCommitMetadata } from './getLatestCommitMetadata';
+export { default as getCurrentBranchMetadata } from './getCurrentBranchMetadata';
+
 export { default as loadEnv } from './loadEnv';
