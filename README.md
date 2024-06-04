@@ -26,12 +26,18 @@
 ![issue-template](https://github.com/chltjdrhd777/image-hosting/blob/main/gitip-issuetemplate.png?raw=true)
 ![issue-list](https://github.com/chltjdrhd777/image-hosting/blob/main/gitip-issuelist.png?raw=true)
 
-> If you want to use template, you should set the `TEMPLATE_TITLE_PLACEHOLDER` varibale on you .env file. It will uses that variable as an issue title.
+> If you want to use template, you should set the `TEMPLATE_TITLE_PLACEHOLDER` varibale on you .env file. It will uses that variable as an issue title placeholder.
 
 ## <br/>
-
-📋
 
 ## usage
 
 ### 1. create an issue
+
+![issue-generation-test](https://github.com/chltjdrhd777/image-hosting/blob/main/issue-generation-test2.png?raw=true)
+
+![issue-generation-test-result](https://github.com/chltjdrhd777/image-hosting/blob/main/issue-generation-test-result.png?raw=true)
+
+---
+
+### 2. create a pull request
