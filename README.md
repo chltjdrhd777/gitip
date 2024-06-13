@@ -1,27 +1,30 @@
-<div align="center"><strong>gitip</strong></div>
+<h1 align="center"><strong>gitip</strong></h1>
 <div align="center">handy create issue & pull request tool</div>
 <br />
+
+<p style="background:red;height:300px"> a handy </p>
 
 ![title](https://github.com/chltjdrhd777/image-hosting/blob/main/gitip.png?raw=true)
 
 ## Instructions
 
-📋 This tool works with remote-fork branch relationships
+<h3>📋 1. This tool works with remote-fork branch relationships</h3>
 
-> please make the fork branch first.
-> <br/>
+- please make the fork branch first.
+  <br/>
 
----
+<h3>📋 2. Before you start, you have to set the environment values on ".env.${NODE_ENV}"</h3>
 
-📋 Before you start, you have to set the environment values on ".env.${NODE_ENV}"
 ![env-file](https://github.com/chltjdrhd777/image-hosting/blob/main/gitip-envs.jpeg?raw=true)
-
-> Basically it uses an env file according to a "NODE_ENV" varibale.<br/> If your environment is "development", then gitip uses the target env file.<br/>
-> If there isn't, a default file is ".env"
-> <br/>
+<br/>
 
 ```bash
-// required varibales
+// <<required varibales>>
+
+// Basically it uses an env file according to a "NODE_ENV" varibale.
+// If your environment is "development", then gitip uses the target env file.
+// If there isn't, a default file is ".env"
+
 GIT_ACCESS_TOKEN = git access token.
 REMOTE_REPO_OWNER = the name of remote branch owner
 FORK_REPO_OWNER = the name of fork branch owner
@@ -30,9 +33,8 @@ BRANCH_NAME = the base(destination) branch name
 TEMPLATE_TITLE_PLACEHOLDER = (optional) issue template title placeholder
 ```
 
----
+<h3>📋 3. This tool uses issue templete. If there isn't, it show the default issue template</h3>
 
-📋 This tool uses issue templete. If there isn't, it show the default issue template
 ![issue-template](https://github.com/chltjdrhd777/image-hosting/blob/main/gitip-issuetemplate.png?raw=true)
 ![issue-list](https://github.com/chltjdrhd777/image-hosting/blob/main/gitip-issuelist.png?raw=true)
 

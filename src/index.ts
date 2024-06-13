@@ -28,7 +28,7 @@ export async function getGitAction() {
     });
 
     command.on('close', (code) => {
-      if (process.env.NODE_ENV !== 'production') {
+      if (process.env.NODE_ENV === 'test') {
         console.log(`child process exited with code ${code}`);
       }
     });

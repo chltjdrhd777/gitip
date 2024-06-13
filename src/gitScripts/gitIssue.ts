@@ -115,7 +115,7 @@ const DEFAULT_ISSUE_TEMPLATES: { name: string; value: string }[] = [
       console.log(`✨ your issue is created : ${issueURL}`);
     }
   } catch (err) {
-    if (process.env.NODE_ENV !== 'production') {
+    if (process.env.NODE_ENV === 'test') {
       console.log('failed to create github issue', err);
     }
   }
