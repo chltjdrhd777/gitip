@@ -11,7 +11,7 @@ export async function getGitAction() {
     const commandList: Map<string, string> = new Map([
       ['create an issue', './gitScripts/gitIssue.js'],
       ['create a pull request', './gitScripts/gitPR.js'],
-      ['synchronize a fork branch with a remote branch', './gitScripts/syncBranch.mjs'],
+      ['synchronize a fork branch with a remote branch', './gitScripts/syncBranch.js'],
       ['clean redundant issue branches', './gitScripts/cleanIssueBranches.mjs'],
     ]);
 

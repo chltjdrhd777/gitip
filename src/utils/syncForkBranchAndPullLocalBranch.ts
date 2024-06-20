@@ -4,7 +4,7 @@ interface SyncForkBranchAndPullLocalBranchParams {
   FORK_REPO_OWNER?: string;
   REPO_NAME?: string;
   BRANCH_NAME?: string;
-  upstreamRemoteAlias: string;
+  upstreamRemoteAlias?: string;
 }
 export default function syncForkBranchAndPullLocalBranch({
   FORK_REPO_OWNER,
