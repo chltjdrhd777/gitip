@@ -1,3 +1,4 @@
+import { Spinner } from '@/lib/Spinner';
 import {
   checkGithubCLI,
   checkIsRequiredVariablesExist,
@@ -41,6 +42,10 @@ const REPO_NAME = process.env.REPO_NAME;
 
   const targetBranch = await askTargetBranchToSync();
 
+  const spinner = new Spinner('please wait for updating');
+
+  const { stop } = await spinner.spin('dots2');
+
   const upstreamRemoteAlias = await findRemoteAlias(`${REMOTE_REPO_OWNER}/${REPO_NAME}`);
   syncForkBranchAndPullLocalBranch({
     FORK_REPO_OWNER,
@@ -49,6 +54,7 @@ const REPO_NAME = process.env.REPO_NAME;
     upstreamRemoteAlias,
   });
 
+  stop();
   console.log('✅ done');
 })();
 

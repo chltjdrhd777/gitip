@@ -1,0 +1,8 @@
+{
+  "json.schemas": [
+    {
+      "fileMatch": ["/src/lib/Spinner/spinners.json"],
+      "url": "/src/lib/Spinner/spinner-schema.json"
+    }
+  ]
+}
