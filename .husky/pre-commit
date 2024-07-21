@@ -1,0 +1,10 @@
+
+# the lint process includes prettier
+check_lint='npm run check:lint'
+check_type='npm run check:type'
+
+${check_lint}
+${check_type}
+
+
+
