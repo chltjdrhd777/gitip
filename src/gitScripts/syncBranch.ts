@@ -1,4 +1,5 @@
-import { Spinner } from '@/lib/Spinner';
+const ora = require('ora-classic');
+
 import {
   checkGithubCLI,
   checkIsRequiredVariablesExist,
@@ -42,9 +43,13 @@ const REPO_NAME = process.env.REPO_NAME;
 
   const targetBranch = await askTargetBranchToSync();
 
-  const spinner = new Spinner('please wait for updating');
+  const spinner = ora('please wait for cleaning').start();
 
-  const { stop } = await spinner.spin('dots2');
+  await new Promise((resolve) => {
+    setTimeout(() => {
+      resolve('wait');
+    }, 1500);
+  });
 
   const upstreamRemoteAlias = await findRemoteAlias(`${REMOTE_REPO_OWNER}/${REPO_NAME}`);
   syncForkBranchAndPullLocalBranch({
@@ -54,7 +59,8 @@ const REPO_NAME = process.env.REPO_NAME;
     upstreamRemoteAlias,
   });
 
-  stop();
+  spinner.stop();
+
   console.log('✅ done');
 })();
 

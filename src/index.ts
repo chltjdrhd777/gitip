@@ -12,7 +12,7 @@ export async function getGitAction() {
       ['create an issue', './gitScripts/gitIssue.js'],
       ['create a pull request', './gitScripts/gitPR.js'],
       ['synchronize a fork branch with a remote branch', './gitScripts/syncBranch.js'],
-      ['clean redundant issue branches', './gitScripts/cleanIssueBranches.mjs'],
+      ['clean redundant issue branches', './gitScripts/cleanIssueBranches.js'],
     ]);
 
     const choices = Array.from(commandList).map(([key]) => key);
@@ -24,7 +24,7 @@ export async function getGitAction() {
 
     const command = spawn('node', [path.join(__dirname, commandList.get(choice) as string)], {
       stdio: 'inherit',
-      detached: true,
+      detached: false,
     });
 
     command.on('close', (code) => {
