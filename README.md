@@ -104,4 +104,5 @@ So, for you, you can remove them all at once like below
 
 As a result, you meat the erased clean space
 
+![issue-clean](https://github.com/chltjdrhd777/image-hosting/blob/main/issue-clean2.png?raw=true)
 ![issue-clean](https://github.com/chltjdrhd777/image-hosting/blob/main/issue-clean.png?raw=true)
