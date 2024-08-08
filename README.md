@@ -4,6 +4,17 @@
 
 <img src="https://github.com/chltjdrhd777/image-hosting/blob/main/gitip.png?raw=true" title="title"></img>
 
+## Installation
+
+```sh
+#not install
+npx gitip
+
+#install
+npm install -g gitip
+gitip
+```
+
 ## Before start
 
 <h4>📋 1. This tool works with remote-fork branch relationships</h4>
