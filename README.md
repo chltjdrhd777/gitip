@@ -35,7 +35,7 @@ TEMPLATE_TITLE_PLACEHOLDER = (optional) issue template title placeholder
 
 <img src="https://github.com/chltjdrhd777/image-hosting/blob/main/gitip-issuetemplate.png?raw=true" width="100%" title="template"></img>
 
-If you want to use your template, you should set the `TEMPLATE_TITLE_PLACEHOLDER` varibale on you .env file. It will uses that variable as an issue title placeholder.
+If you want to use your template, you should set the `TEMPLATE_TITLE_PLACEHOLDER` varibale on your .env file. It will uses that variable as an issue title placeholder.
 
 <br/>
 
