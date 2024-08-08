@@ -2,15 +2,16 @@
   "name": "gitip",
   "version": "1.0.0",
   "description": "auto generate git issue and pull request",
-  "main": "./src/index.ts",
+  "main": "./dist/index.js",
   "scripts": {
     "dev": "cross-env NODE_ENV=development ts-node ./src/index.ts",
     "link": "rm -rf dist && npm run build && npm link",
     "check:type": "tsc --noEmit",
     "check:lint": "npx eslint . --quiet --ignore-pattern '/dist/*'",
     "build": "node script/build.js",
-    "prepublishOnly": "npm run build",
-    "postinstall": "npx husky"
+    "set-package": "npx ts-node ./script/setupPackage.ts",
+    "postinstall": "npx husky",
+    "bulid-publish": "npm run build && npm run set-package && cd dist && npm publish"
   },
   "bin": {
     "gitip": "./dist/index.js"
@@ -20,6 +21,10 @@
     "issue",
     "pull request"
   ],
+  "homepage": "https://github.com/chltjdrhd777/gitip",
+  "bugs": {
+    "email": "chltjdrhd7777777@gmail.com"
+  },
   "author": {
     "name": "devAnderson",
     "email": "chltjdrhd777@gmail.com"
