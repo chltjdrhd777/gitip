@@ -14,14 +14,14 @@ export default function syncForkBranchAndPullLocalBranch({
 }: SyncForkBranchAndPullLocalBranchParams) {
   const executeSync = executeCommand(`gh repo sync ${FORK_REPO_OWNER}/${REPO_NAME} -b ${BRANCH_NAME}`);
   if (executeSync === null) {
-    console.log('failed to sync repo');
+    console.log('🕹 failed to sync repo');
     process.exitCode = 1;
     return;
   }
 
   const executePull = executeCommand(`git pull ${upstreamRemoteAlias} ${BRANCH_NAME}`);
   if (executePull === null) {
-    console.log('failed to git pull. please check the change status first');
+    console.log('🕹 failed to git pull. please check the change status first');
     process.exitCode = 1;
     return;
   }
