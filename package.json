@@ -11,7 +11,7 @@
     "build": "node script/build.js",
     "set-package": "npx ts-node ./script/setupPackage.ts",
     "postinstall": "npx husky",
-    "bulid-publish": "npm run build && npm run set-package && cd dist && npm publish"
+    "build-publish": "npm run build && npm run set-package && cd dist && npm publish"
   },
   "bin": {
     "gitip": "./dist/index.js"
