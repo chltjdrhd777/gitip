@@ -3,10 +3,20 @@ import path from 'path';
 
 function main() {
   const cwd = process.cwd();
-  const pacakgeJsonSourcePath = path.join(cwd, 'package.json');
-  const pakcageJsonDestPath = path.join(cwd, 'dist', 'package.json');
-  const gitignoreSourcePath = path.join(cwd, '.gitignore');
-  const gitignoreDestPath = path.join(cwd, 'dist', '.gitignore');
+
+  const getSourcePath = (paths: string[]) => path.join(cwd, ...paths);
+  const getDestPath = (paths: string[]) => path.join(cwd, 'dist', ...paths);
+
+  const packageJsonFileName = 'package.json';
+  const gitignoreFileName = '.gitignore';
+  const readmeFileName = 'README.md';
+
+  const pacakgeJsonSourcePath = getSourcePath([packageJsonFileName]);
+  const pakcageJsonDestPath = getDestPath([packageJsonFileName]);
+  const gitignoreSourcePath = getSourcePath([gitignoreFileName]);
+  const gitignoreDestPath = getDestPath([gitignoreFileName]);
+  const readmeSourcePath = getSourcePath([readmeFileName]);
+  const readmeDestPath = getDestPath([readmeFileName]);
 
   const pacakgeJsonSource = fs.readFileSync(pacakgeJsonSourcePath, 'utf-8');
   const packageJsonObj = JSON.parse(pacakgeJsonSource);
@@ -29,6 +39,9 @@ function main() {
 
   // copy .gitignore into dist
   fs.copyFileSync(gitignoreSourcePath, gitignoreDestPath);
+
+  // copy README.md into dist
+  fs.copyFileSync(readmeSourcePath, readmeDestPath);
 }
 
 main();
