@@ -5,18 +5,17 @@ import {
   getCurrentBranchName,
   getLatestCommitMetadata,
   pushToForkBranch,
+  loadEnv,
 } from '@/utils';
 
-import dotenv from 'dotenv';
-dotenv.config();
-
 //PREREQUISITE
+loadEnv();
+
 const GIT_ACCESS_TOKEN = process.env.GIT_ACCESS_TOKEN;
 const REMOTE_REPO_OWNER = process.env.REMOTE_REPO_OWNER;
 const FORK_REPO_OWNER = process.env.FORK_REPO_OWNER;
 const REPO_NAME = process.env.REPO_NAME;
 const BRANCH_NAME = process.env.BRANCH_NAME;
-const TEMPLATE_TITLE_PLACEHOLDER = process.env.TEMPLATE_TITLE_PLACEHOLDER;
 
 const GIT_API_URL = `https://api.github.com/repos/${REMOTE_REPO_OWNER}/${REPO_NAME}/pulls`;
 
@@ -32,11 +31,10 @@ const GIT_API_URL = `https://api.github.com/repos/${REMOTE_REPO_OWNER}/${REPO_NA
     FORK_REPO_OWNER,
     REPO_NAME,
     BRANCH_NAME,
-    TEMPLATE_TITLE_PLACEHOLDER,
   });
   if (!isExistRequiredVars.status) {
     return console.log(
-      `🕹 please set the required variables on the ".env"\n ${isExistRequiredVars.emptyVariablekeys
+      `🕹 please set the required variables on the ".env.{environment}"\n ${isExistRequiredVars.emptyVariablekeys
         .map((e, i) => `${i + 1}. ${e}`)
         .join('\n')}`,
     );

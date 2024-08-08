@@ -53,7 +53,7 @@ const DEFAULT_ISSUE_TEMPLATES: { name: string; value: string }[] = [
     });
     if (!isExistRequiredVars.status) {
       return console.error(
-        `🕹 please set the required variables on the ".env"\n${isExistRequiredVars.emptyVariablekeys
+        `🕹 please set the required variables on the ".env.{environment}"\n${isExistRequiredVars.emptyVariablekeys
           .map((e, i) => `${i + 1}. ${e}`)
           .join('\n')}\n\n🕹  If variables already exist, please run this command from the root folder of your project`,
       );

@@ -6,8 +6,11 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development ts-node ./src/index.ts",
     "link": "rm -rf dist && npm run build && npm link",
+    "check:type": "tsc --noEmit",
+    "check:lint": "npx eslint . --quiet --ignore-pattern '/dist/*'",
     "build": "node script/build.js",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "postinstall": "npx husky"
   },
   "bin": {
     "gitip": "./dist/index.js"
@@ -35,9 +38,11 @@
     "@inquirer/select": "^2.3.3",
     "@opentf/cli-pbar": "^0.7.2",
     "cli-progress": "^3.12.0",
+    "cli-spinners": "^3.0.0",
     "dotenv": "^16.4.5",
     "enquirer": "^2.4.1",
     "node-fetch": "^3.3.2",
+    "ora-classic": "^5.4.2",
     "tsc-alias": "^1.8.8"
   }
 }
