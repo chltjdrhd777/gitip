@@ -109,7 +109,7 @@ When you are using gitip, maybe you would face the situation that there are bunc
 If you should remove the unused branches, it takes time and effort. <br/>
 So, for you, you can remove them all at once like below
 
-#### 4. 😀 like this
+#### 3. 😀 like this
 
 ![clean-issue-branches](https://github.com/chltjdrhd777/image-hosting/blob/main/clean%20issue%20branches.gif?raw=true)
 
