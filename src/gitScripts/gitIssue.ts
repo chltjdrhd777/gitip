@@ -12,7 +12,7 @@ import {
 } from '@/utils';
 import { readFileSync, readdirSync } from 'fs';
 import path from 'path';
-import { cwd } from 'process';
+import { cwd, exit } from 'process';
 import { exec } from 'child_process';
 
 import { input } from '@inquirer/prompts';
@@ -199,7 +199,7 @@ async function createGitHubIssue(issueTemplate: string | null, issueTitle: strin
   // default body
   let requestBody: { [key: string]: string } = { title: issueTitle };
 
-  if (issueTemplate) {
+  if (issueTemplate && TEMPLATE_TITLE_PLACEHOLDER) {
     // separate markdown
     const hypenSplittedGroup = String(issueTemplate)
       .split('---')
