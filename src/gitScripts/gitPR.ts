@@ -82,7 +82,11 @@ const GIT_API_URL = `https://api.github.com/repos/${REMOTE_REPO_OWNER}/${REPO_NA
   };
 
   //4. create PR
-  await createGitHubPR({ requestBody });
+  const prNumber = await createGitHubPR({ requestBody });
+
+  if (prNumber) {
+    await assignPRToUser(prNumber);
+  }
 })();
 
 /**
@@ -145,8 +149,34 @@ async function createGitHubPR({ requestBody }: { requestBody: RequestBody }) {
     }
 
     console.log(`your pr is created : ${data.html_url}`);
+    return data;
   } catch (err) {
     console.error(err);
     throw new Error('fail to create PR');
+  }
+}
+
+async function assignPRToUser(prNumber: string) {
+  try {
+    const assignResponse = await fetch(
+      `https://api.github.com/repos/${REMOTE_REPO_OWNER}/${REPO_NAME}/issues/${prNumber}/assignees`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${GIT_ACCESS_TOKEN}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ assignees: [FORK_REPO_OWNER] }),
+      },
+    );
+
+    if (assignResponse.ok) {
+      console.log(`✨ Assignee added successfully: ${FORK_REPO_OWNER}`);
+    } else {
+      const errorData = await assignResponse.json();
+      console.error(`❌ Failed to add assignee: ${JSON.stringify(errorData)}`);
+    }
+  } catch (error: any) {
+    console.error(`Error adding assignee: ${error.message}`);
   }
 }
