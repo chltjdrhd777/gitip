@@ -82,10 +82,10 @@ const GIT_API_URL = `https://api.github.com/repos/${REMOTE_REPO_OWNER}/${REPO_NA
   };
 
   //4. create PR
-  const prNumber = await createGitHubPR({ requestBody });
+  const prResponse = await createGitHubPR({ requestBody });
 
-  if (prNumber) {
-    await assignPRToUser(prNumber);
+  if (prResponse) {
+    await assignPRToUser(prResponse.number);
   }
 })();
 
