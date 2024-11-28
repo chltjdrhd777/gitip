@@ -1,5 +1,5 @@
 import { findRemoteAlias } from '@/utils';
-import { executeCommand } from '@/utils/executeCommand';
+import { executeCommand } from '@/utils/common-utils/executeCommand';
 
 const ora = require('ora-classic');
 

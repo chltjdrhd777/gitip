@@ -1,7 +1,7 @@
 import { SingleBar } from 'cli-progress';
 import { exec } from 'child_process';
 
-export default async function installGithubCLI() {
+export async function installGithubCLI() {
   return new Promise((resolve, reject) => {
     console.log('⚙️  gh is not installed, please wait for the installation');
 

@@ -1,6 +1,6 @@
-import { executeCommand } from './executeCommand';
+import { executeCommand } from '@/utils/common-utils/executeCommand';
 
-export default function getCurrentBranchMetadata() {
+export function getCurrentBranchMetadata() {
   const branchName = executeCommand('git rev-parse --abbrev-ref HEAD')?.toString()?.trim();
 
   if (branchName) {

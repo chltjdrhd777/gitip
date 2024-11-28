@@ -1,7 +1,7 @@
-import { executeCommand } from './executeCommand';
-import checkBranchExistence from './checkBranchExistence';
+import { executeCommand } from '@/utils/common-utils/executeCommand';
+import { checkBranchExistence } from './checkBranchExistence';
 
-export default async function checkoutToTargetBranch(branchName: string) {
+export async function checkoutToTargetBranch(branchName: string) {
   const currentBranch = executeCommand('git branch --show-current');
   const isExistFeatureBranch = await checkBranchExistence(branchName);
 
