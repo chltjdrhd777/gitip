@@ -15,6 +15,7 @@ import { cwd } from 'process';
 import { exec } from 'child_process';
 
 import { input } from '@inquirer/prompts';
+import { DEFAULT_ISSUE_TEMPLATES } from '@/constants/defaultIssueTemplates';
 
 /**@PRE_REQUISITE */
 loadEnv();
@@ -27,13 +28,6 @@ const TEMPLATE_TITLE_PLACEHOLDER = process.env.TEMPLATE_TITLE_PLACEHOLDER;
 const GIT_API_URL = `https://api.github.com/repos/${ORIGIN_REPO_OWNER}/${REPO_NAME}/issues`;
 
 const ISSUE_TEMPLATE_PATH = path.join(cwd(), '.github', 'ISSUE_TEMPLATE');
-
-const DEFAULT_ISSUE_TEMPLATES: { name: string; value: string }[] = [
-  { name: 'feature', value: 'feature' },
-  { name: 'fix', value: 'fix' },
-  { name: 'bug', value: 'bug' },
-  { name: 'test', value: 'test' },
-];
 
 (async () => {
   try {

@@ -10,6 +10,8 @@ const forkRepoCommandStore = new CommandStore().addCommands([
 ]);
 
 /** origin repo command store */
-const originRepoCommandStore = new CommandStore().addCommands([]);
+const originRepoCommandStore = new CommandStore().addCommands([
+  new Command('create an issue', './gitScripts/originScripts/gitIssue.js'),
+]);
 
 export { forkRepoCommandStore, originRepoCommandStore };
