@@ -7,7 +7,6 @@ import {
   checkGithubAuth,
   checkoutToTargetBranch,
   findRemoteAlias,
-  syncForkBranchAndPullLocalBranch,
   loadEnv,
 } from '@/utils';
 import { readFileSync, readdirSync } from 'fs';
@@ -21,12 +20,11 @@ import { input } from '@inquirer/prompts';
 loadEnv();
 
 const GIT_ACCESS_TOKEN = process.env.GIT_ACCESS_TOKEN;
-const REMOTE_REPO_OWNER = process.env.REMOTE_REPO_OWNER;
-const FORK_REPO_OWNER = process.env.FORK_REPO_OWNER;
+const ORIGIN_REPO_OWNER = process.env.ORIGIN_REPO_OWNER;
 const REPO_NAME = process.env.REPO_NAME;
 const BRANCH_NAME = process.env.BRANCH_NAME;
 const TEMPLATE_TITLE_PLACEHOLDER = process.env.TEMPLATE_TITLE_PLACEHOLDER;
-const GIT_API_URL = `https://api.github.com/repos/${REMOTE_REPO_OWNER}/${REPO_NAME}/issues`;
+const GIT_API_URL = `https://api.github.com/repos/${ORIGIN_REPO_OWNER}/${REPO_NAME}/issues`;
 
 const ISSUE_TEMPLATE_PATH = path.join(cwd(), '.github', 'ISSUE_TEMPLATE');
 
@@ -46,8 +44,7 @@ const DEFAULT_ISSUE_TEMPLATES: { name: string; value: string }[] = [
     //1. check required variables
     const isExistRequiredVars = checkIsRequiredVariablesExist({
       GIT_ACCESS_TOKEN,
-      REMOTE_REPO_OWNER,
-      FORK_REPO_OWNER,
+      ORIGIN_REPO_OWNER,
       REPO_NAME,
       BRANCH_NAME,
     });
@@ -75,20 +72,12 @@ const DEFAULT_ISSUE_TEMPLATES: { name: string; value: string }[] = [
     await checkoutToTargetBranch(BRANCH_NAME ?? '');
 
     //4-1. check origin branch remote alias
-    const upstreamRemoteAlias = await findRemoteAlias(`${REMOTE_REPO_OWNER}/${REPO_NAME}`);
+    const upstreamRemoteAlias = await findRemoteAlias(`${ORIGIN_REPO_OWNER}/${REPO_NAME}`);
     if (!upstreamRemoteAlias) {
       return console.error(
         '🕹 No remote for "upstream" branch. please add it first\nRun : \x1b[36mgit remote add upstream {upstream repository url}\x1b[0m',
       );
     }
-
-    //5. sync fork branch with remote original branch and update local branch
-    syncForkBranchAndPullLocalBranch({
-      FORK_REPO_OWNER,
-      REPO_NAME,
-      BRANCH_NAME,
-      upstreamRemoteAlias,
-    });
 
     /**
      * @ISSUE_CREATION
@@ -210,7 +199,7 @@ async function createGitHubIssue(issueTemplate: string | null, issueTitle: strin
       const [key, value] = cur.split(/:(.+)/, 2);
 
       if (key === 'assignees') {
-        acc[key] = [FORK_REPO_OWNER];
+        acc[key] = [ORIGIN_REPO_OWNER];
         return acc;
       }
 
@@ -242,7 +231,7 @@ async function createGitHubIssue(issueTemplate: string | null, issueTitle: strin
     if (response.status === 422) {
       return console.log(`🚫 status code : 422. This can happen for the following reasons\n
 			1. No issue branch was created for pull request(or closed by cib cli). check your fork repository first\n
-			2. your request properties are not valid. check environment variables. (ex. FORK_REPO_OWNER )\n
+			2. your request properties are not valid. check environment variables. (ex. ORIGIN_REPO_OWNER )\n
 			3. No change was detected. make change and commit first
 			`);
     }
