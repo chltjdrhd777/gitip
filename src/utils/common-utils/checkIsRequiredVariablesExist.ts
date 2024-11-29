@@ -1,4 +1,4 @@
-export default function checkIsRequiredVariablesExist(requiredVariables: { [key: string]: string | undefined }) {
+export function checkIsRequiredVariablesExist(requiredVariables: { [key: string]: string | undefined }) {
   return Object.entries(requiredVariables).reduce(
     (acc, [key, value]) => {
       if (!value) {

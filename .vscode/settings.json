@@ -4,5 +4,6 @@
       "fileMatch": ["/src/lib/Spinner/spinners.json"],
       "url": "/src/lib/Spinner/spinner-schema.json"
     }
-  ]
+  ],
+  "typescript.tsdk": "node_modules/typescript/lib"
 }

@@ -1,4 +1,4 @@
-import { executeCommand } from './executeCommand';
+import { executeCommand } from '@/utils/common-utils/executeCommand';
 
 interface SyncForkBranchAndPullLocalBranchParams {
   FORK_REPO_OWNER?: string;
@@ -6,7 +6,7 @@ interface SyncForkBranchAndPullLocalBranchParams {
   BRANCH_NAME?: string;
   upstreamRemoteAlias?: string;
 }
-export default function syncForkBranchAndPullLocalBranch({
+export function syncForkBranchAndPullLocalBranch({
   FORK_REPO_OWNER,
   REPO_NAME,
   BRANCH_NAME,

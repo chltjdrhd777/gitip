@@ -1,5 +1,5 @@
 import { findRemoteAlias } from '@/utils';
-import { executeCommand } from '@/utils/executeCommand';
+import { executeCommand } from '@/utils/common-utils/executeCommand';
 
 const ora = require('ora-classic');
 
@@ -31,7 +31,10 @@ const REPO_NAME = process.env.REPO_NAME;
   //1. delete all remote issue branches
   const getAllOriginIssueBranches = executeCommand(`git branch -r | grep '${forkRemoteAlias}/issue-'`)?.toString();
 
-  if (!getAllOriginIssueBranches) return console.log('🧽 done');
+  if (!getAllOriginIssueBranches) {
+    spinner.stop();
+    return console.log('🧽 done');
+  }
 
   const refinedBranchNames = getAllOriginIssueBranches
     .split('\n')
