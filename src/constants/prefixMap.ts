@@ -1,0 +1,18 @@
+export const PREFIX_MAP: Record<string, { emoji: string }> = {
+  'feat:': { emoji: `🌟` },
+  'fix:': { emoji: '🔨' },
+  'test:': { emoji: '🔬' },
+  'refactor:': { emoji: '🏭' },
+  'style:': { emoji: '🎨' },
+  'docs:': { emoji: '📄' },
+  'chore:': { emoji: '💡' },
+  'perf:': { emoji: '⚡' },
+  'ci:': { emoji: '🛠️' },
+  'build:': { emoji: '🏗️' },
+  'revert:': { emoji: '⏪' },
+  'deps:': { emoji: '📦' },
+  'bug:': { emoji: '🐞' },
+  'hotfix:': { emoji: '🚑' },
+  'security:': { emoji: '🔒' },
+  'config:': { emoji: '⚙️' },
+};

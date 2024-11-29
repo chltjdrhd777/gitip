@@ -12,6 +12,8 @@ const forkRepoCommandStore = new CommandStore().addCommands([
 /** origin repo command store */
 const originRepoCommandStore = new CommandStore().addCommands([
   new Command('create an issue', './gitScripts/originScripts/gitIssue.js'),
+  new Command('create a pull request', './gitScripts/originScripts/gitPR.js'),
+  new Command('clean redundant issue branches', './gitScripts/originScripts/cleanIssueBranches.js'),
 ]);
 
 export { forkRepoCommandStore, originRepoCommandStore };

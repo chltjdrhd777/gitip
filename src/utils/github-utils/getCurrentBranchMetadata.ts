@@ -6,7 +6,10 @@ export function getCurrentBranchMetadata() {
   if (branchName) {
     const issueNumber = branchName.match(/issue-(.*)/)?.[1];
 
-    if (!issueNumber) return null;
+    if (!issueNumber) {
+      console.log('🚫 failed to get issue number. please switch to issue branch');
+      return null;
+    }
 
     return {
       branchName,
