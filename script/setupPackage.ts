@@ -11,15 +11,15 @@ function main() {
   const gitignoreFileName = '.gitignore';
   const readmeFileName = 'README.md';
 
-  const pacakgeJsonSourcePath = getSourcePath([packageJsonFileName]);
-  const pakcageJsonDestPath = getDestPath([packageJsonFileName]);
+  const packageJsonSourcePath = getSourcePath([packageJsonFileName]);
+  const packageJsonDestPath = getDestPath([packageJsonFileName]);
   const gitignoreSourcePath = getSourcePath([gitignoreFileName]);
   const gitignoreDestPath = getDestPath([gitignoreFileName]);
   const readmeSourcePath = getSourcePath([readmeFileName]);
   const readmeDestPath = getDestPath([readmeFileName]);
 
-  const pacakgeJsonSource = fs.readFileSync(pacakgeJsonSourcePath, 'utf-8');
-  const packageJsonObj = JSON.parse(pacakgeJsonSource);
+  const packageJsonSource = fs.readFileSync(packageJsonSourcePath, 'utf-8');
+  const packageJsonObj = JSON.parse(packageJsonSource);
 
   // clear scripts and devDependencies
   packageJsonObj.scripts = {};
@@ -35,7 +35,7 @@ function main() {
   }
 
   // generate package.json into dist
-  fs.writeFileSync(pakcageJsonDestPath, JSON.stringify(packageJsonObj, null, 2), 'utf-8');
+  fs.writeFileSync(packageJsonDestPath, JSON.stringify(packageJsonObj, null, 2), 'utf-8');
 
   // copy .gitignore into dist
   fs.copyFileSync(gitignoreSourcePath, gitignoreDestPath);
