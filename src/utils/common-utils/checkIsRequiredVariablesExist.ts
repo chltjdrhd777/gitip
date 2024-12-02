@@ -3,10 +3,10 @@ export function checkIsRequiredVariablesExist(requiredVariables: { [key: string]
     (acc, [key, value]) => {
       if (!value) {
         acc.status = false;
-        acc.emptyVariablekeys.push(key);
+        acc.emptyVariableKeys.push(key);
       }
       return acc;
     },
-    { status: true, emptyVariablekeys: [] as string[] },
+    { status: true, emptyVariableKeys: [] as string[] },
   );
 }

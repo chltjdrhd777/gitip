@@ -7,8 +7,8 @@ import {
   checkGithubAuth,
   checkoutToTargetBranch,
   findRemoteAlias,
-  syncForkBranchAndPullLocalBranch,
   loadEnv,
+  syncForkBranchAndUpdateLocal,
 } from '@/utils';
 import { readFileSync, readdirSync } from 'fs';
 import path from 'path';
@@ -22,12 +22,12 @@ import { DEFAULT_ISSUE_TEMPLATES } from '@/constants/defaultIssueTemplates';
 loadEnv();
 
 const GIT_ACCESS_TOKEN = process.env.GIT_ACCESS_TOKEN;
-const REMOTE_REPO_OWNER = process.env.REMOTE_REPO_OWNER;
+const UPSTREAM_REPO_OWNER = process.env.UPSTREAM_REPO_OWNER;
 const FORK_REPO_OWNER = process.env.FORK_REPO_OWNER;
 const REPO_NAME = process.env.REPO_NAME;
 const BRANCH_NAME = process.env.BRANCH_NAME;
 const TEMPLATE_TITLE_PLACEHOLDER = process.env.TEMPLATE_TITLE_PLACEHOLDER;
-const GIT_API_URL = `https://api.github.com/repos/${REMOTE_REPO_OWNER}/${REPO_NAME}/issues`;
+const GIT_API_URL = `https://api.github.com/repos/${UPSTREAM_REPO_OWNER}/${REPO_NAME}/issues`;
 
 const ISSUE_TEMPLATE_PATH = path.join(cwd(), '.github', 'ISSUE_TEMPLATE');
 
@@ -40,14 +40,14 @@ const ISSUE_TEMPLATE_PATH = path.join(cwd(), '.github', 'ISSUE_TEMPLATE');
     //1. check required variables
     const isExistRequiredVars = checkIsRequiredVariablesExist({
       GIT_ACCESS_TOKEN,
-      REMOTE_REPO_OWNER,
+      UPSTREAM_REPO_OWNER,
       FORK_REPO_OWNER,
       REPO_NAME,
       BRANCH_NAME,
     });
     if (!isExistRequiredVars.status) {
       return console.error(
-        `🕹 please set the required variables on the ".env.{environment}"\n${isExistRequiredVars.emptyVariablekeys
+        `🕹 please set the required variables on the ".env.{environment}"\n${isExistRequiredVars.emptyVariableKeys
           .map((e, i) => `${i + 1}. ${e}`)
           .join('\n')}\n\n🕹  If variables already exist, please run this command from the root folder of your project`,
       );
@@ -69,7 +69,7 @@ const ISSUE_TEMPLATE_PATH = path.join(cwd(), '.github', 'ISSUE_TEMPLATE');
     await checkoutToTargetBranch(BRANCH_NAME ?? '');
 
     //4-1. check origin branch remote alias
-    const upstreamRemoteAlias = await findRemoteAlias(`${REMOTE_REPO_OWNER}/${REPO_NAME}`);
+    const upstreamRemoteAlias = await findRemoteAlias(`${UPSTREAM_REPO_OWNER}/${REPO_NAME}`);
     if (!upstreamRemoteAlias) {
       return console.error(
         '🕹 No remote for "upstream" branch. please add it first\nRun : \x1b[36mgit remote add upstream {upstream repository url}\x1b[0m',
@@ -77,11 +77,11 @@ const ISSUE_TEMPLATE_PATH = path.join(cwd(), '.github', 'ISSUE_TEMPLATE');
     }
 
     //5. sync fork branch with remote original branch and update local branch
-    syncForkBranchAndPullLocalBranch({
+    syncForkBranchAndUpdateLocal({
+      UPSTREAM_REPO_OWNER,
       FORK_REPO_OWNER,
       REPO_NAME,
-      BRANCH_NAME,
-      upstreamRemoteAlias,
+      syncTargetBranch: BRANCH_NAME,
     });
 
     /**

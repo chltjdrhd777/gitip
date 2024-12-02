@@ -33,7 +33,7 @@ const GIT_API_URL = `https://api.github.com/repos/${ORIGIN_REPO_OWNER}/${REPO_NA
   });
   if (!isExistRequiredVars.status) {
     return console.log(
-      `🕹 please set the required variables on the ".env.{environment}"\n ${isExistRequiredVars.emptyVariablekeys
+      `🕹 please set the required variables on the ".env.{environment}"\n ${isExistRequiredVars.emptyVariableKeys
         .map((e, i) => `${i + 1}. ${e}`)
         .join('\n')}`,
     );

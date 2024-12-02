@@ -9,4 +9,4 @@ export * from './getCurrentBranchName';
 export * from './getLatestCommitMetadata';
 export * from './installGithubCLI';
 export * from './pushToTargetBranch';
-export * from './syncForkBranchAndPullLocalBranch';
+export * from './syncForkBranchAndUpdateLocal';

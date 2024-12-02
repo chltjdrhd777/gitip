@@ -13,12 +13,12 @@ import {
 loadEnv();
 
 const GIT_ACCESS_TOKEN = process.env.GIT_ACCESS_TOKEN;
-const REMOTE_REPO_OWNER = process.env.REMOTE_REPO_OWNER;
+const UPSTREAM_REPO_OWNER = process.env.UPSTREAM_REPO_OWNER;
 const FORK_REPO_OWNER = process.env.FORK_REPO_OWNER;
 const REPO_NAME = process.env.REPO_NAME;
 const BRANCH_NAME = process.env.BRANCH_NAME;
 
-const GIT_API_URL = `https://api.github.com/repos/${REMOTE_REPO_OWNER}/${REPO_NAME}/pulls`;
+const GIT_API_URL = `https://api.github.com/repos/${UPSTREAM_REPO_OWNER}/${REPO_NAME}/pulls`;
 
 (async () => {
   /**
@@ -28,14 +28,14 @@ const GIT_API_URL = `https://api.github.com/repos/${REMOTE_REPO_OWNER}/${REPO_NA
   //0. check variables required first
   const isExistRequiredVars = checkIsRequiredVariablesExist({
     GIT_ACCESS_TOKEN,
-    REMOTE_REPO_OWNER,
+    UPSTREAM_REPO_OWNER,
     FORK_REPO_OWNER,
     REPO_NAME,
     BRANCH_NAME,
   });
   if (!isExistRequiredVars.status) {
     return console.log(
-      `🕹 please set the required variables on the ".env.{environment}"\n ${isExistRequiredVars.emptyVariablekeys
+      `🕹 please set the required variables on the ".env.{environment}"\n ${isExistRequiredVars.emptyVariableKeys
         .map((e, i) => `${i + 1}. ${e}`)
         .join('\n')}`,
     );
@@ -150,7 +150,7 @@ async function createGitHubPR({ requestBody }: { requestBody: RequestBody }) {
 async function assignPRToUser(prNumber: string) {
   try {
     const assignResponse = await fetch(
-      `https://api.github.com/repos/${REMOTE_REPO_OWNER}/${REPO_NAME}/issues/${prNumber}/assignees`,
+      `https://api.github.com/repos/${UPSTREAM_REPO_OWNER}/${REPO_NAME}/issues/${prNumber}/assignees`,
       {
         method: 'POST',
         headers: {
