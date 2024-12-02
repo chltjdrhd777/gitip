@@ -1,18 +1,32 @@
 import { executeCommand } from '@/utils/common-utils/executeCommand';
 import { checkBranchExistence } from './checkBranchExistence';
-import { DefaultConfig } from '@/types';
+import { checkCurrentBranch } from './checkCurrentBranch';
+import { Callbacks } from '@/types';
+import { PROCESS_EXIT } from '../common-utils';
 
-interface CheckoutToTargetBranchConfig extends DefaultConfig {}
+interface CheckoutToTargetBranchConfig extends Callbacks {}
 
-export async function checkoutToTargetBranch(branchName: string, config?: CheckoutToTargetBranchConfig) {
-  const currentBranch = executeCommand('git branch --show-current', { debug: config?.debug });
-  const isExistFeatureBranch = await checkBranchExistence(branchName);
+export async function checkoutToTargetBranch(
+  branchName: string,
+  checkoutToTargetBranchConfig?: CheckoutToTargetBranchConfig,
+) {
+  const { onError } = checkoutToTargetBranchConfig ?? {};
 
-  if (!isExistFeatureBranch) {
-    executeCommand('git checkout -b feature');
-  }
+  try {
+    const currentBranch = checkCurrentBranch(checkoutToTargetBranchConfig);
+    const isExistFeatureBranch = await checkBranchExistence(branchName);
 
-  if (currentBranch?.toString().replace(/\s/, '') !== branchName) {
-    executeCommand('git checkout feature');
+    if (!isExistFeatureBranch) {
+      console.log(`🕹 no ${branchName} branch, checkout to ${branchName} branch creating`);
+      executeCommand('git checkout -b feature', checkoutToTargetBranchConfig);
+    }
+
+    if (currentBranch?.toString().replace(/\s/, '') !== branchName) {
+      console.log(`🕹 current branch is not ${branchName} branch, checkout to ${branchName} branch`);
+      executeCommand('git checkout feature', checkoutToTargetBranchConfig);
+    }
+  } catch (err) {
+    onError?.(err);
+    PROCESS_EXIT();
   }
 }

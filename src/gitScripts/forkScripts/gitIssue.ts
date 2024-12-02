@@ -35,35 +35,45 @@ const ISSUE_TEMPLATE_PATH = path.join(cwd(), '.github', 'ISSUE_TEMPLATE');
      */
 
     //1. check required variables
-    const isExistRequiredVars = checkIsRequiredVariablesExist({
-      GIT_ACCESS_TOKEN,
-      UPSTREAM_REPO_OWNER,
-      FORK_REPO_OWNER,
-      REPO_NAME,
-      BRANCH_NAME,
-    });
-    if (!isExistRequiredVars.status) {
-      return console.error(
-        `🕹 please set the required variables on the ".env.{environment}"\n${isExistRequiredVars.emptyVariableKeys
-          .map((e, i) => `${i + 1}. ${e}`)
-          .join('\n')}\n\n🕹  If variables already exist, please run this command from the root folder of your project`,
-      );
-    }
+    checkIsRequiredVariablesExist(
+      {
+        GIT_ACCESS_TOKEN,
+        UPSTREAM_REPO_OWNER,
+        FORK_REPO_OWNER,
+        REPO_NAME,
+        BRANCH_NAME,
+      },
+      {
+        onError: (variables) => {
+          console.error(
+            `🕹 please set the required variables on the ".env.{environment}"\n${(variables?.emptyVariableKeys ?? [])
+              .map((e, i) => `${i + 1}. ${e}`)
+              .join(
+                '\n',
+              )}\n\n🕹  If variables already exist, please run this command from the root folder of your project`,
+          );
+        },
+      },
+    );
 
     //4. checkout to feature branch from local machine
-    await checkoutToTargetBranch(BRANCH_NAME as string);
+    await checkoutToTargetBranch(BRANCH_NAME as string, {
+      onError: () => {
+        console.error(`❌ failed to checkout ${BRANCH_NAME}`);
+      },
+    });
 
     //4-1. check origin branch remote alias
-    const upstreamRemoteAlias = await findRemoteAlias(`${UPSTREAM_REPO_OWNER}/${REPO_NAME}`);
-
-    if (!upstreamRemoteAlias) {
-      return console.error(
-        '🕹 No remote for "upstream" branch. please add it first\nRun : \x1b[36mgit remote add upstream {upstream repository url}\x1b[0m',
-      );
-    }
+    findRemoteAlias(`${UPSTREAM_REPO_OWNER}/${REPO_NAME}`, {
+      onError: () => {
+        return console.error(
+          '🕹 No remote for "upstream" branch. please add it first\nRun : \x1b[36mgit remote add upstream {upstream repository url}\x1b[0m',
+        );
+      },
+    });
 
     //5. sync fork branch with remote original branch and update local branch
-    await syncForkBranchAndUpdateLocal({
+    syncForkBranchAndUpdateLocal({
       UPSTREAM_REPO_OWNER,
       FORK_REPO_OWNER,
       REPO_NAME,

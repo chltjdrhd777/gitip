@@ -1,3 +1,4 @@
+export * from './checkCurrentBranch';
 export * from './checkBranchExistence';
 export * from './checkGithubAuth';
 export * from './checkGithubCLI';
