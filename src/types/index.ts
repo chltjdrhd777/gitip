@@ -3,3 +3,7 @@ export interface Callbacks {
   onError?: (...args: any) => any;
   onSettled?: (...args: any) => any;
 }
+
+export interface DefaultConfig {
+  debug?: boolean;
+}

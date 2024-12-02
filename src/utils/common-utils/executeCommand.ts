@@ -10,7 +10,7 @@ export function executeCommand(
   { debug = true, onSuccess, onError, onSettled }: ExecuteCommandConfig = {},
 ) {
   try {
-    const executeResult = execSync(command);
+    const executeResult = execSync(command, { stdio: debug ? 'pipe' : 'ignore' });
     onSuccess?.(executeResult);
     onSettled?.(executeResult);
     return executeResult;

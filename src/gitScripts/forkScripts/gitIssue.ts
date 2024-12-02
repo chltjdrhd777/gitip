@@ -1,22 +1,19 @@
-import select from '@inquirer/select';
-
 import {
   checkIsRequiredVariablesExist,
-  checkGithubCLI,
-  installGithubCLI,
-  checkGithubAuth,
   checkoutToTargetBranch,
   findRemoteAlias,
   loadEnv,
   syncForkBranchAndUpdateLocal,
+  inquireIssueType,
+  inquireIssueTitle,
+  getIssueTemplate,
+  replaceTitlePlaceholder,
+  inquireIssueBranchName,
 } from '@/utils';
-import { readFileSync, readdirSync } from 'fs';
+
 import path from 'path';
 import { cwd } from 'process';
 import { exec } from 'child_process';
-
-import { input } from '@inquirer/prompts';
-import { DEFAULT_ISSUE_TEMPLATES } from '@/constants/defaultIssueTemplates';
 
 /**@PRE_REQUISITE */
 loadEnv();
@@ -53,23 +50,12 @@ const ISSUE_TEMPLATE_PATH = path.join(cwd(), '.github', 'ISSUE_TEMPLATE');
       );
     }
 
-    //2. check git CLI
-    const isGithubCLIExist = checkGithubCLI();
-    if (!isGithubCLIExist) {
-      await installGithubCLI();
-    }
-
-    //3. check git CLI login status
-    const isGithubCLILoggedIn = checkGithubAuth();
-    if (!isGithubCLILoggedIn) {
-      return console.error('🔐 Please auth login first to use gh.\nRun : \x1b[36mgh auth login\x1b[0m');
-    }
-
     //4. checkout to feature branch from local machine
-    await checkoutToTargetBranch(BRANCH_NAME ?? '');
+    await checkoutToTargetBranch(BRANCH_NAME as string);
 
     //4-1. check origin branch remote alias
     const upstreamRemoteAlias = await findRemoteAlias(`${UPSTREAM_REPO_OWNER}/${REPO_NAME}`);
+
     if (!upstreamRemoteAlias) {
       return console.error(
         '🕹 No remote for "upstream" branch. please add it first\nRun : \x1b[36mgit remote add upstream {upstream repository url}\x1b[0m',
@@ -77,11 +63,14 @@ const ISSUE_TEMPLATE_PATH = path.join(cwd(), '.github', 'ISSUE_TEMPLATE');
     }
 
     //5. sync fork branch with remote original branch and update local branch
-    syncForkBranchAndUpdateLocal({
+    await syncForkBranchAndUpdateLocal({
       UPSTREAM_REPO_OWNER,
       FORK_REPO_OWNER,
       REPO_NAME,
       syncTargetBranch: BRANCH_NAME,
+      config: {
+        debug: false,
+      },
     });
 
     /**
@@ -90,7 +79,8 @@ const ISSUE_TEMPLATE_PATH = path.join(cwd(), '.github', 'ISSUE_TEMPLATE');
 
     // 1. inquiry
     const issueTypeTemplateFilename = await inquireIssueType();
-    const issueTitle = await inquirerIssueTitle();
+    const issueTitle = await inquireIssueTitle();
+    const issueBranchName = await inquireIssueBranchName();
 
     // 2. select proper template
     const issueTemplate = getIssueTemplate(path.join(ISSUE_TEMPLATE_PATH, issueTypeTemplateFilename));
@@ -105,7 +95,7 @@ const ISSUE_TEMPLATE_PATH = path.join(cwd(), '.github', 'ISSUE_TEMPLATE');
       // 5. checkout
       const { issueNumber, issueURL } = createIssueResult;
 
-      exec(`git checkout -b issue-${issueNumber}`);
+      exec(`git checkout -b ${issueBranchName}-${issueNumber}`);
       console.log(`✨ your issue is created : ${issueURL}`);
     }
   } catch (err) {
@@ -118,68 +108,6 @@ const ISSUE_TEMPLATE_PATH = path.join(cwd(), '.github', 'ISSUE_TEMPLATE');
 /**
  * @helper
  */
-function readTemplateDirectory() {
-  try {
-    const templateFolderPath = './.github/ISSUE_TEMPLATE';
-    const templates = readdirSync(path.join(process.cwd(), templateFolderPath));
-
-    return templates.map((templateFileName) => ({
-      nmae: templateFileName,
-      value: templateFileName,
-    }));
-  } catch {
-    return null;
-  }
-}
-
-async function inquireIssueType() {
-  let choices = [];
-
-  const templates = readTemplateDirectory();
-
-  if (templates === null || templates.length === 0) {
-    choices = DEFAULT_ISSUE_TEMPLATES;
-  } else {
-    choices = templates;
-  }
-
-  const answer = await select({
-    message: 'what type of issue you want to create:',
-    choices,
-  });
-
-  return answer;
-}
-
-async function inquirerIssueTitle() {
-  const title = await input({
-    message: 'Enter issue title:',
-    validate: (value) => {
-      if (!value) return 'please enter the title';
-      return true;
-    },
-  });
-
-  return title;
-}
-
-function getIssueTemplate(url: string) {
-  try {
-    const templateContent = readFileSync(url, 'utf8');
-    return templateContent;
-  } catch (error) {
-    return null;
-  }
-}
-
-function replaceTitlePlaceholder(issueTemplate: string | null, issueTitle: string) {
-  if (!issueTemplate) return null;
-
-  if (TEMPLATE_TITLE_PLACEHOLDER) {
-    issueTemplate = issueTemplate.replace(TEMPLATE_TITLE_PLACEHOLDER, issueTitle);
-  }
-  return issueTemplate;
-}
 
 function unescapeUnicode(str: string) {
   const unicodeRegex = /\\[uU]([0-9a-fA-F]{4,8})/g;
@@ -200,7 +128,7 @@ async function createGitHubIssue(issueTemplate: string | null, issueTitle: strin
       .map((section) => section.trim());
 
     // extract metadata
-    const templateMeatadata = hypenSplittedGroup[1].split('\n').reduce((acc, cur) => {
+    const templateMetadata = hypenSplittedGroup[1].split('\n').reduce((acc, cur) => {
       const [key, value] = cur.split(/:(.+)/, 2);
 
       if (key === 'assignees') {
@@ -220,7 +148,7 @@ async function createGitHubIssue(issueTemplate: string | null, issueTitle: strin
     const templateBody = hypenSplittedGroup[2] ?? '';
 
     // update requestBody
-    requestBody = { ...templateMeatadata, body: templateBody };
+    requestBody = { ...templateMetadata, body: templateBody };
   }
 
   try {
