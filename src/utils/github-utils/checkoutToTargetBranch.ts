@@ -5,7 +5,7 @@ import { DefaultConfig } from '@/types';
 interface CheckoutToTargetBranchConfig extends DefaultConfig {}
 
 export async function checkoutToTargetBranch(branchName: string, config?: CheckoutToTargetBranchConfig) {
-  const currentBranch = executeCommand('git branch --show-current');
+  const currentBranch = executeCommand('git branch --show-current', { debug: config?.debug });
   const isExistFeatureBranch = await checkBranchExistence(branchName);
 
   if (!isExistFeatureBranch) {

@@ -1,14 +1,11 @@
-import { Callbacks } from '@/types';
+import { Callbacks, DefaultConfig } from '@/types';
 import { execSync } from 'child_process';
 
-interface ExecuteCommandConfig extends Callbacks {
-  debug?: boolean;
-}
+interface ExecuteCommandConfig extends Callbacks, DefaultConfig {}
 
-export function executeCommand(
-  command: string,
-  { debug = true, onSuccess, onError, onSettled }: ExecuteCommandConfig = {},
-) {
+export function executeCommand(command: string, executeCommandConfig: ExecuteCommandConfig = {}) {
+  const { debug = true, onSuccess, onSettled, onError } = executeCommandConfig;
+
   try {
     const executeResult = execSync(command, { stdio: debug ? 'pipe' : 'ignore' });
     onSuccess?.(executeResult);
