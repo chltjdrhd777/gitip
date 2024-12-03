@@ -1,17 +1,20 @@
 import {
   checkIsRequiredVariablesExist,
   checkoutToTargetBranch,
+  findRemoteAlias,
   loadEnv,
   inquireIssueType,
   inquireIssueTitle,
-  inquireIssueBranchName,
   getIssueTemplate,
   replaceTitlePlaceholder,
+  inquireIssueBranchName,
+  createIssueBranchName,
 } from '@/utils';
 
 import path from 'path';
 import { cwd } from 'process';
 import { exec } from 'child_process';
+import { COLORS } from '@/constants/colors';
 
 /**@PRE_REQUISITE */
 loadEnv();
@@ -32,22 +35,41 @@ const ISSUE_TEMPLATE_PATH = path.join(cwd(), '.github', 'ISSUE_TEMPLATE');
      */
 
     //1. check required variables
-    const isExistRequiredVars = checkIsRequiredVariablesExist({
-      GIT_ACCESS_TOKEN,
-      ORIGIN_REPO_OWNER,
-      REPO_NAME,
-      BRANCH_NAME,
-    });
-    if (!isExistRequiredVars.status) {
-      return console.error(
-        `🕹 please set the required variables on the ".env.{environment}"\n${isExistRequiredVars.emptyVariableKeys
-          .map((e, i) => `${i + 1}. ${e}`)
-          .join('\n')}\n\n🕹  If variables already exist, please run this command from the root folder of your project`,
-      );
-    }
+    checkIsRequiredVariablesExist(
+      {
+        GIT_ACCESS_TOKEN,
+        ORIGIN_REPO_OWNER,
+        REPO_NAME,
+        BRANCH_NAME,
+      },
+      {
+        onError: (variables) => {
+          console.error(
+            `🕹 please set the required variables on the ".env.{environment}"\n${(variables?.emptyVariableKeys ?? [])
+              .map((e, i) => `${i + 1}. ${e}`)
+              .join(
+                '\n',
+              )}\n\n🕹  If variables already exist, please run this command from the root folder of your project`,
+          );
+        },
+      },
+    );
 
-    //2. checkout to feature branch from local machine
-    await checkoutToTargetBranch(BRANCH_NAME as string);
+    //4. checkout to feature branch on local machine
+    await checkoutToTargetBranch(BRANCH_NAME as string, {
+      onError: () => {
+        console.error(`\n🚫 failed to checkout ${BRANCH_NAME}`);
+      },
+    });
+
+    //4-1. check origin remote alias
+    findRemoteAlias(`${ORIGIN_REPO_OWNER}/${REPO_NAME}`, {
+      onError: () => {
+        return console.error(
+          '🕹 No remote for "origin". please add it first\nRun : \x1b[36mgit remote add upstream {upstream repository url}\x1b[0m',
+        );
+      },
+    });
 
     /**
      * @ISSUE_CREATION
@@ -62,17 +84,16 @@ const ISSUE_TEMPLATE_PATH = path.join(cwd(), '.github', 'ISSUE_TEMPLATE');
     const issueTemplate = getIssueTemplate(path.join(ISSUE_TEMPLATE_PATH, issueTypeTemplateFilename));
 
     // 3. replace title placeholder
-    const titleReplacedTemplate = replaceTitlePlaceholder(issueTemplate, issueTitle);
+    const titleReplacedTemplate = replaceTitlePlaceholder(issueTemplate, issueTitle, TEMPLATE_TITLE_PLACEHOLDER);
 
     // 4. create issue and receive issue number
     const createIssueResult = await createGitHubIssue(titleReplacedTemplate, issueTitle);
 
     if (createIssueResult) {
       // 5. checkout
-      const { issueNumber, issueURL } = createIssueResult;
+      const { issueNumber } = createIssueResult;
 
-      exec(`git checkout -b ${issueBranchName}-${issueNumber}`);
-      console.log(`✨ your issue is created : ${issueURL}`);
+      exec(`git checkout -b ${createIssueBranchName({ issueBranchName, issueNumber })}`);
     }
   } catch (err) {
     if (process.env.NODE_ENV === 'test') {
@@ -93,7 +114,6 @@ function unescapeUnicode(str: string) {
 
   return str.replace(unicodeRegex, (_, group) => String.fromCodePoint(parseInt(group, 16)));
 }
-
 async function createGitHubIssue(issueTemplate: string | null, issueTitle: string) {
   // default body
   let requestBody: { [key: string]: string } = { title: issueTitle };
@@ -151,6 +171,20 @@ async function createGitHubIssue(issueTemplate: string | null, issueTitle: strin
       return false;
     } else {
       const data = (await response.json()) as any;
+
+      const { bold, reset, cyan, green, yellow, magenta } = COLORS;
+
+      const baseBranch = magenta + (data.base || 'develop') + reset;
+      const headBranch = yellow + (data.head || 'feature/my-feature') + reset;
+
+      console.log(`
+${green}${bold}✨ Issue Created Successfully!${reset}
+🏷️  ${bold}Issue Number:${reset}  ${yellow}${data.number}${reset}
+🔗  ${bold}URL:${reset}           ${cyan}${data.html_url}${reset}
+📄  ${bold}Title:${reset}         ${yellow}${issueTitle}${reset}
+🌿  ${bold}Base Branch:${reset}   ${baseBranch}
+🌱  ${bold}Head Branch:${reset}   ${headBranch}
+`);
 
       return {
         issueNumber: data.number,

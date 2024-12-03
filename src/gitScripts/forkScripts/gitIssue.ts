@@ -10,6 +10,7 @@ import {
   replaceTitlePlaceholder,
   inquireIssueBranchName,
   sleep,
+  createIssueBranchName,
 } from '@/utils';
 
 import path from 'path';
@@ -60,18 +61,18 @@ const ISSUE_TEMPLATE_PATH = path.join(cwd(), '.github', 'ISSUE_TEMPLATE');
       },
     );
 
-    //4. checkout to feature branch from local machine
+    //4. checkout to feature branch on local machine
     await checkoutToTargetBranch(BRANCH_NAME as string, {
       onError: () => {
         console.error(`\n🚫 failed to checkout ${BRANCH_NAME}`);
       },
     });
 
-    //4-1. check origin branch remote alias
+    //4-1. check upstream remote alias
     findRemoteAlias(`${UPSTREAM_REPO_OWNER}/${REPO_NAME}`, {
       onError: () => {
         return console.error(
-          '🕹 No remote for "upstream" branch. please add it first\nRun : \x1b[36mgit remote add upstream {upstream repository url}\x1b[0m',
+          '🕹 No remote for "upstream". please add it first\nRun : \x1b[36mgit remote add upstream {upstream repository url}\x1b[0m',
         );
       },
     });
@@ -115,7 +116,7 @@ const ISSUE_TEMPLATE_PATH = path.join(cwd(), '.github', 'ISSUE_TEMPLATE');
       // 5. checkout
       const { issueNumber } = createIssueResult;
 
-      exec(`git checkout -b ${issueBranchName}-${issueNumber}`);
+      exec(`git checkout -b ${createIssueBranchName({ issueBranchName, issueNumber })}`);
     }
   } catch (err) {
     if (process.env.NODE_ENV === 'test') {

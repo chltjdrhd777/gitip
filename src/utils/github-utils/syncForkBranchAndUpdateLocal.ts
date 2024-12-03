@@ -1,7 +1,7 @@
 import { DefaultConfig } from '@/types';
 import { executeCommand } from '../common-utils/executeCommand'; // Adjust the import path as needed
 import { findRemoteAlias } from './findRemoteAlias';
-import { log } from '../common-utils';
+import { PROCESS_EXIT, log } from '../common-utils';
 
 interface SyncForkBranchParams {
   UPSTREAM_REPO_OWNER?: string;
@@ -108,6 +108,6 @@ export function syncForkBranchAndUpdateLocal({
     config?.onSuccess?.();
   } catch (error) {
     console.error(`\n🚫 Error during sync: ${error}`);
-    process.exit();
+    PROCESS_EXIT();
   }
 }
