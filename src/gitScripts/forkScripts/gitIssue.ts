@@ -9,11 +9,15 @@ import {
   getIssueTemplate,
   replaceTitlePlaceholder,
   inquireIssueBranchName,
+  sleep,
 } from '@/utils';
 
 import path from 'path';
 import { cwd } from 'process';
 import { exec } from 'child_process';
+import { COLORS } from '@/constants/colors';
+
+const ora = require('ora-classic');
 
 /**@PRE_REQUISITE */
 loadEnv();
@@ -59,7 +63,7 @@ const ISSUE_TEMPLATE_PATH = path.join(cwd(), '.github', 'ISSUE_TEMPLATE');
     //4. checkout to feature branch from local machine
     await checkoutToTargetBranch(BRANCH_NAME as string, {
       onError: () => {
-        console.error(`❌ failed to checkout ${BRANCH_NAME}`);
+        console.error(`\n🚫 failed to checkout ${BRANCH_NAME}`);
       },
     });
 
@@ -73,6 +77,9 @@ const ISSUE_TEMPLATE_PATH = path.join(cwd(), '.github', 'ISSUE_TEMPLATE');
     });
 
     //5. sync fork branch with remote original branch and update local branch
+    const spinner = ora(`🕹 syncing fork branch with upstream...`).start();
+    await sleep(500);
+
     syncForkBranchAndUpdateLocal({
       UPSTREAM_REPO_OWNER,
       FORK_REPO_OWNER,
@@ -80,6 +87,9 @@ const ISSUE_TEMPLATE_PATH = path.join(cwd(), '.github', 'ISSUE_TEMPLATE');
       syncTargetBranch: BRANCH_NAME,
       config: {
         debug: false,
+        onSuccess: () => {
+          spinner.stop();
+        },
       },
     });
 
@@ -96,17 +106,16 @@ const ISSUE_TEMPLATE_PATH = path.join(cwd(), '.github', 'ISSUE_TEMPLATE');
     const issueTemplate = getIssueTemplate(path.join(ISSUE_TEMPLATE_PATH, issueTypeTemplateFilename));
 
     // 3. replace title placeholder
-    const titleReplacedTemplate = replaceTitlePlaceholder(issueTemplate, issueTitle);
+    const titleReplacedTemplate = replaceTitlePlaceholder(issueTemplate, issueTitle, TEMPLATE_TITLE_PLACEHOLDER);
 
     // 4. create issue and receive issue number
     const createIssueResult = await createGitHubIssue(titleReplacedTemplate, issueTitle);
 
     if (createIssueResult) {
       // 5. checkout
-      const { issueNumber, issueURL } = createIssueResult;
+      const { issueNumber } = createIssueResult;
 
       exec(`git checkout -b ${issueBranchName}-${issueNumber}`);
-      console.log(`✨ your issue is created : ${issueURL}`);
     }
   } catch (err) {
     if (process.env.NODE_ENV === 'test') {
@@ -184,6 +193,20 @@ async function createGitHubIssue(issueTemplate: string | null, issueTitle: strin
       return false;
     } else {
       const data = (await response.json()) as any;
+
+      const { bold, reset, cyan, green, yellow, magenta } = COLORS;
+
+      const baseBranch = magenta + (data.base || 'develop') + reset;
+      const headBranch = yellow + (data.head || 'feature/my-feature') + reset;
+
+      console.log(`
+${green}${bold}✨ Issue Created Successfully!${reset}
+🏷️  ${bold}Issue Number:${reset}  ${yellow}${data.number}${reset}
+🔗  ${bold}URL:${reset}           ${cyan}${data.html_url}${reset}
+📄  ${bold}Title:${reset}         ${yellow}${issueTitle}${reset}
+🌿  ${bold}Base Branch:${reset}   ${baseBranch}
+🌱  ${bold}Head Branch:${reset}   ${headBranch}
+`);
 
       return {
         issueNumber: data.number,

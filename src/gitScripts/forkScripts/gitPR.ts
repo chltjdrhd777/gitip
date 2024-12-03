@@ -165,7 +165,7 @@ async function assignPRToUser(prNumber: string) {
       console.log(`✨ Assignee added successfully: ${FORK_REPO_OWNER}`);
     } else {
       const errorData = await assignResponse.json();
-      console.error(`❌ Failed to add assignee: ${JSON.stringify(errorData)}`);
+      console.error(`\n🚫 Failed to add assignee: ${JSON.stringify(errorData)}`);
     }
   } catch (error: any) {
     console.error(`Error adding assignee: ${error.message}`);

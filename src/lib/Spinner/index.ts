@@ -22,14 +22,14 @@ export class Spinner {
       const [row] = await this.getCursorDimension();
       const { interval: baseInterval, frames } = spinners[spinnerType];
 
-      const printSpinerParams = {
+      const printSpinnerParams = {
         frameIdx: 0,
         row,
         frames,
       };
 
       const intervalId = setInterval(() => {
-        this.printSpiner(printSpinerParams);
+        this.printSpinner(printSpinnerParams);
       }, config.interval ?? baseInterval);
 
       this.cleanup(intervalId);
@@ -66,10 +66,10 @@ export class Spinner {
     });
   }
 
-  printSpiner(printSpinerParams: { frameIdx: number; row: number; frames: string[] }) {
-    const { frames, row } = printSpinerParams;
-    stdout.write(`${frames[printSpinerParams.frameIdx]} ${this.comment}`);
-    printSpinerParams.frameIdx = (printSpinerParams.frameIdx + 1) % frames.length;
+  printSpinner(printSpinnerParams: { frameIdx: number; row: number; frames: string[] }) {
+    const { frames, row } = printSpinnerParams;
+    stdout.write(`${frames[printSpinnerParams.frameIdx]} ${this.comment}`);
+    printSpinnerParams.frameIdx = (printSpinnerParams.frameIdx + 1) % frames.length;
 
     this.restoreCursorPosition(row);
   }

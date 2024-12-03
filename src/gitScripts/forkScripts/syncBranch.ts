@@ -27,7 +27,7 @@ const REPO_NAME = process.env.REPO_NAME;
 
   const targetBranch = await askTargetBranchToSync();
 
-  const spinner = ora('please wait for cleaning').start();
+  const spinner = ora('please wait for cleaning...').start();
   await sleep(1000);
 
   syncForkBranchAndUpdateLocal({

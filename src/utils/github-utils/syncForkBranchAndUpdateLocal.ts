@@ -1,4 +1,4 @@
-import { Callbacks, DefaultConfig } from '@/types';
+import { DefaultConfig } from '@/types';
 import { executeCommand } from '../common-utils/executeCommand'; // Adjust the import path as needed
 import { findRemoteAlias } from './findRemoteAlias';
 import { log } from '../common-utils';
@@ -24,7 +24,7 @@ export function syncForkBranchAndUpdateLocal({
     const forkRepoRemoteAlias = findRemoteAlias(`${FORK_REPO_OWNER}/${REPO_NAME}`, {
       onError: () => {
         console.error(
-          `❌ Failed to find remote alias for the fork repository: ${UPSTREAM_REPO_OWNER}/${REPO_NAME}. Please add it first.\n` +
+          `\n🚫 Failed to find remote alias for the fork repository: ${UPSTREAM_REPO_OWNER}/${REPO_NAME}. Please add it first.\n` +
             `👉 To add the fork repository remote, run the following command:\n` +
             `\n` +
             `   💻 git remote add "fork_repo_remote_alias" "fork_repo_url"\n` +
@@ -37,7 +37,7 @@ export function syncForkBranchAndUpdateLocal({
     const upstreamRepoRemoteAlias = findRemoteAlias(`${UPSTREAM_REPO_OWNER}/${REPO_NAME}`, {
       onError: () => {
         console.error(
-          `❌ Failed to find remote alias for the upstream repository: ${UPSTREAM_REPO_OWNER}/${REPO_NAME}. Please add it first.\n` +
+          `\n🚫 Failed to find remote alias for the upstream repository: ${UPSTREAM_REPO_OWNER}/${REPO_NAME}. Please add it first.\n` +
             `👉 To add the upstream repository remote, run the following command:\n` +
             `\n` +
             `   💻 git remote add "upstream_repo_remote_alias" "upstream_repo_url"\n` +
@@ -48,9 +48,18 @@ export function syncForkBranchAndUpdateLocal({
     });
 
     // Fetch updates from the upstream repository
+
     executeCommand(`git fetch ${upstreamRepoRemoteAlias}`, {
       onSuccess: () => {
         log(debug, () => console.log(`✅ Fetched upstream(${upstreamRepoRemoteAlias}) changes.`));
+      },
+      onError: () => {
+        console.error(
+          `\n🚫 Failed to fetch: ${upstreamRepoRemoteAlias} when synchronizing with ${forkRepoRemoteAlias}.`,
+        );
+      },
+      execSyncOptions: {
+        stdio: 'ignore',
       },
     });
 
@@ -60,7 +69,10 @@ export function syncForkBranchAndUpdateLocal({
         log(debug, () => console.log(`✅ Checked out branch: ${syncTargetBranch}.`));
       },
       onError: () => {
-        console.error(`❌ Failed to checkout branch: ${syncTargetBranch}. check your local branch list first.`);
+        console.error(`\n🚫 Failed to checkout branch: ${syncTargetBranch}. check your local branch list first.`);
+      },
+      execSyncOptions: {
+        stdio: 'ignore',
       },
     });
 
@@ -70,7 +82,12 @@ export function syncForkBranchAndUpdateLocal({
         log(debug, () => console.log(`✅ Pulled updates from ${upstreamRepoRemoteAlias}/${syncTargetBranch}.`));
       },
       onError: () => {
-        console.error(`❌ Failed to pull: ${syncTargetBranch} when synchronizing with ${upstreamRepoRemoteAlias}.`);
+        console.error(
+          `\n🚫 Failed to pull: ${syncTargetBranch} when synchronizing with ${upstreamRepoRemoteAlias}.\nPlease commit your changes or stash them before you merge.\nAborting`,
+        );
+      },
+      execSyncOptions: {
+        stdio: 'ignore',
       },
     });
 
@@ -80,14 +97,17 @@ export function syncForkBranchAndUpdateLocal({
         log(debug, () => console.log(`✅ Pushed updates to ${forkRepoRemoteAlias}/${syncTargetBranch}.`));
       },
       onError: () => {
-        console.error(`❌ Failed to push: ${syncTargetBranch} when synchronizing with ${forkRepoRemoteAlias}.`);
+        console.error(`\n🚫 Failed to push: ${syncTargetBranch} when synchronizing with ${forkRepoRemoteAlias}.`);
+      },
+      execSyncOptions: {
+        stdio: 'ignore',
       },
     });
 
     //callback
     config?.onSuccess?.();
   } catch (error) {
-    console.error(`❌ Error during sync: ${error}`);
+    console.error(`\n🚫 Error during sync: ${error}`);
     process.exit();
   }
 }
