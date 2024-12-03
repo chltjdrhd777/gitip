@@ -7,6 +7,11 @@ import {
   getLatestCommitMetadata,
   pushToTargetBranch,
   loadEnv,
+  createCheckIsRequiredVariablesExistErrorMessage,
+  getCurrentBranchNameErrorMessage,
+  createFindRemoteAliasErrorMessage,
+  getLatestCommitMetadataErrorMessage,
+  CommitMetadata,
 } from '@/utils';
 
 //PREREQUISITE
@@ -26,42 +31,39 @@ const GIT_API_URL = `https://api.github.com/repos/${UPSTREAM_REPO_OWNER}/${REPO_
    */
 
   //0. check variables required first
-  const isExistRequiredVars = checkIsRequiredVariablesExist({
-    GIT_ACCESS_TOKEN,
-    UPSTREAM_REPO_OWNER,
-    FORK_REPO_OWNER,
-    REPO_NAME,
-    BRANCH_NAME,
-  });
-  if (!isExistRequiredVars.status) {
-    return console.log(
-      `🕹 please set the required variables on the ".env.{environment}"\n ${isExistRequiredVars.emptyVariableKeys
-        .map((e, i) => `${i + 1}. ${e}`)
-        .join('\n')}`,
-    );
-  }
+  checkIsRequiredVariablesExist(
+    {
+      GIT_ACCESS_TOKEN,
+      UPSTREAM_REPO_OWNER,
+      FORK_REPO_OWNER,
+      REPO_NAME,
+      BRANCH_NAME,
+    },
+    {
+      onError: (variables) => console.error(createCheckIsRequiredVariablesExistErrorMessage({ variables })),
+    },
+  );
 
   //1. get current branch name
-  const currentBranchName = getCurrentBranchName();
+  const currentBranchName = getCurrentBranchName({
+    onError: () => console.error(getCurrentBranchNameErrorMessage()),
+  });
 
   //2. push current change log to fork branch
-  const forkRemoteAlias = await findRemoteAlias(`${FORK_REPO_OWNER}/${REPO_NAME}`);
-  if (!forkRemoteAlias) {
-    return console.log(
-      `🕹 No remote alias for "Fork" url. please add it first\nRun : \x1b[36mgit remote add fork {fork repository url}\x1b[0m`,
-    );
-  }
+  const forkRepoRemoteAlias = findRemoteAlias(`${FORK_REPO_OWNER}/${REPO_NAME}`, {
+    onError: () => console.error(createFindRemoteAliasErrorMessage({ targetRepo: 'fork' })),
+  });
 
-  pushToTargetBranch(forkRemoteAlias, currentBranchName);
+  //3. push to current branch on fork repository
+  pushToTargetBranch(forkRepoRemoteAlias, currentBranchName);
 
   /**
    * @CREATE_PR
    */
 
-  const commitMetadata = getLatestCommitMetadata();
-  if (commitMetadata === null) {
-    return console.log(`🕹 failed to load the latest commit data.`);
-  }
+  const commitMetadata = getLatestCommitMetadata({
+    onError: () => console.error(getLatestCommitMetadataErrorMessage()),
+  }) as CommitMetadata;
 
   //1. select prefix emoji
   const emoji = getPrefixEmoji(commitMetadata.title);

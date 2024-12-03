@@ -1,7 +1,12 @@
+import { DefaultConfig } from '@/types';
 import { executeCommand } from '@/utils/common-utils/executeCommand';
 
-export function getCurrentBranchMetadata() {
-  const branchName = executeCommand('git rev-parse --abbrev-ref HEAD')?.toString()?.trim();
+interface GetCurrentBranchMetadataConfig extends DefaultConfig {}
+
+export function getCurrentBranchMetadata(getCurrentBranchMetadataConfig?: GetCurrentBranchMetadataConfig) {
+  const branchName = executeCommand('git rev-parse --abbrev-ref HEAD', getCurrentBranchMetadataConfig)
+    ?.toString()
+    ?.trim();
 
   if (branchName) {
     const issueNumber = branchName.match(/issue-(.*)/)?.[1];

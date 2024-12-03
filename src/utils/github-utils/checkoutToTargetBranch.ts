@@ -30,3 +30,7 @@ export async function checkoutToTargetBranch(
     PROCESS_EXIT();
   }
 }
+
+export function checkoutToTargetBranchErrorMessage({ BRANCH_NAME = '' }: { BRANCH_NAME?: string }) {
+  return console.error(`\n🚫 failed to checkout ${BRANCH_NAME}`);
+}

@@ -21,7 +21,7 @@ export function executeCommand(command: string, executeCommandConfig: ExecuteCom
     onSuccess?.(executeResult);
     return executeResult;
   } catch (err) {
-    console.error(`\n🚫 Command failed: ${command}`);
+    // console.error(`\n🚫 Command failed: ${command}`);
     onError?.(err);
 
     if (exitWhenError) {

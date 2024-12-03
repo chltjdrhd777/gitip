@@ -7,6 +7,7 @@ import {
   getLatestCommitMetadata,
   pushToTargetBranch,
   loadEnv,
+  CommitMetadata,
 } from '@/utils';
 
 //PREREQUISITE
@@ -43,7 +44,7 @@ const GIT_API_URL = `https://api.github.com/repos/${ORIGIN_REPO_OWNER}/${REPO_NA
   const currentBranchName = getCurrentBranchName();
 
   //2. push current change log to origin branch
-  const originRepoAlias = await findRemoteAlias(`${ORIGIN_REPO_OWNER}/${REPO_NAME}`);
+  const originRepoAlias = findRemoteAlias(`${ORIGIN_REPO_OWNER}/${REPO_NAME}`);
   if (!originRepoAlias) {
     return console.log(
       `🕹 No remote for "origin" branch. please add it first\nRun : \x1b[36mgit remote add origin {origin repository url}\x1b[0m`,
@@ -56,7 +57,7 @@ const GIT_API_URL = `https://api.github.com/repos/${ORIGIN_REPO_OWNER}/${REPO_NA
    * @CREATE_PR
    */
 
-  const commitMetadata = getLatestCommitMetadata();
+  const commitMetadata = getLatestCommitMetadata() as CommitMetadata;
 
   if (commitMetadata === null) {
     return console.log(`🕹 failed to load the latest commit data.`);

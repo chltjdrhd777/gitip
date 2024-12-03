@@ -30,3 +30,9 @@ export function checkIsRequiredVariablesExist(
 
   return variables;
 }
+
+export function createCheckIsRequiredVariablesExistErrorMessage({ variables }: { variables?: Variables }) {
+  return `🕹 please set the required variables on the ".env.{environment}"\n${(variables?.emptyVariableKeys ?? [])
+    .map((e, i) => `${i + 1}. ${e}`)
+    .join('\n')}\n\n🕹  If variables already exist, please run this command from the root folder of your project`;
+}

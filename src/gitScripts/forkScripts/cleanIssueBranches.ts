@@ -16,12 +16,12 @@ const REPO_NAME = process.env.REPO_NAME;
   });
 
   //0. branch remote update and checkout
-  const forkRemoteAlias = await findRemoteAlias(`${FORK_REPO_OWNER}/${REPO_NAME}`);
+  const forkRemoteAlias = findRemoteAlias(`${FORK_REPO_OWNER}/${REPO_NAME}`);
   if (!forkRemoteAlias) {
     spinner.stop();
 
     return console.log(
-      `🕹 No remote for "Fork" branch. please add it first\nRun : \x1b[36mgit remote add fork {fork repository url}\x1b[0m`,
+      `🕹 No remote for "Fork" branch. please add it first\nRun : \x1b[36mgit remote add {fork alias} {fork repository url}\x1b[0m`,
     );
   }
 

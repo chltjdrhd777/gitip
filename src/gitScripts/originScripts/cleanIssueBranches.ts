@@ -16,12 +16,12 @@ const REPO_NAME = process.env.REPO_NAME;
   });
 
   //0. branch remote update and checkout
-  const originRemoteAlias = await findRemoteAlias(`${ORIGIN_REPO_OWNER}/${REPO_NAME}`);
+  const originRemoteAlias = findRemoteAlias(`${ORIGIN_REPO_OWNER}/${REPO_NAME}`);
   if (!originRemoteAlias) {
     spinner.stop();
 
     return console.log(
-      `🕹 No remote alias for "Origin" url. please add it first\nRun : \x1b[36mgit remote add origin {origin repository url}\x1b[0m`,
+      `🕹 No remote alias for "Origin" url. please add it first\nRun : \x1b[36mgit remote add {origin alias} {origin repository url}\x1b[0m`,
     );
   }
 
