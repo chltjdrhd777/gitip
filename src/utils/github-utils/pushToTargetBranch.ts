@@ -15,11 +15,11 @@ export function pushToTargetBranch(
 }
 
 export function createPushToTargetBranchErrorMessage({
-  FORK_REPO_OWNER = '',
+  REPO_OWNER = '',
   REPO_NAME = '',
 }: {
-  FORK_REPO_OWNER?: string;
+  REPO_OWNER?: string;
   REPO_NAME?: string;
 }) {
-  return `\n🚫 Failed to push to ${FORK_REPO_OWNER}/${REPO_NAME} repository. please check your env again`;
+  return `\n🚫 Failed to push to ${REPO_OWNER}/${REPO_NAME} repository. please check your env again`;
 }

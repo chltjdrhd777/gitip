@@ -1,4 +1,3 @@
-import { COLORS } from '@/constants/colors';
 import {
   checkIsRequiredVariablesExist,
   findRemoteAlias,
@@ -14,7 +13,6 @@ import {
   CommitMetadata,
   BranchMetadata,
   createPushToTargetBranchErrorMessage,
-  PROCESS_EXIT,
 } from '@/utils';
 import { getPRBody, getPRTitle, getPrefixEmoji, inquirePRTitle } from '@/utils/pr-utils';
 import { assignPRToUser } from '@/utils/pr-utils/assignPRToUser';
@@ -28,7 +26,6 @@ const UPSTREAM_REPO_OWNER = process.env.UPSTREAM_REPO_OWNER;
 const FORK_REPO_OWNER = process.env.FORK_REPO_OWNER;
 const REPO_NAME = process.env.REPO_NAME;
 const BRANCH_NAME = process.env.BRANCH_NAME;
-
 const GIT_API_URL = `https://api.github.com/repos/${UPSTREAM_REPO_OWNER}/${REPO_NAME}/pulls`;
 
 (async () => {
@@ -56,14 +53,14 @@ const GIT_API_URL = `https://api.github.com/repos/${UPSTREAM_REPO_OWNER}/${REPO_
       onError: () => console.error(createCurrentBranchNameErrorMessage()),
     });
 
-    //2. push current change log to fork branch
+    //2. get remote alias for fork repository
     const forkRepoRemoteAlias = findRemoteAlias(`${FORK_REPO_OWNER}/${REPO_NAME}`, {
       onError: () => console.error(createFindRemoteAliasErrorMessage({ targetRepo: 'fork' })),
     });
 
-    //3. push to current branch on fork repository
+    //3. push changes to current branch on fork repository
     pushToTargetBranch(forkRepoRemoteAlias, currentBranchName, {
-      onError: () => console.error(createPushToTargetBranchErrorMessage({ FORK_REPO_OWNER, REPO_NAME })),
+      onError: () => console.error(createPushToTargetBranchErrorMessage({ REPO_OWNER: FORK_REPO_OWNER, REPO_NAME })),
     });
 
     /**
@@ -102,8 +99,7 @@ const GIT_API_URL = `https://api.github.com/repos/${UPSTREAM_REPO_OWNER}/${REPO_
     if (prResponse) {
       await assignPRToUser({
         prNumber: prResponse.number,
-        UPSTREAM_REPO_OWNER,
-        FORK_REPO_OWNER,
+        REPO_OWNER: FORK_REPO_OWNER,
         REPO_NAME,
         GIT_ACCESS_TOKEN,
       });

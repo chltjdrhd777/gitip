@@ -51,7 +51,7 @@ export function syncForkBranchAndUpdateLocal({
 
     executeCommand(`git fetch ${upstreamRepoRemoteAlias}`, {
       onSuccess: () => {
-        log(debug, () => console.log(`✅ Fetched upstream(${upstreamRepoRemoteAlias}) changes.`));
+        log(debug, () => console.log(`\n\n✅ Fetched upstream(${upstreamRepoRemoteAlias}) changes.`));
       },
       onError: () => {
         console.error(
