@@ -11,7 +11,7 @@ import {
   createIssueBranchName,
   createFindRemoteAliasErrorMessage,
   createCheckIsRequiredVariablesExistErrorMessage,
-  checkoutToTargetBranchErrorMessage,
+  createCheckoutToTargetBranchErrorMessage,
 } from '@/utils';
 
 import path from 'path';
@@ -52,7 +52,7 @@ const ISSUE_TEMPLATE_PATH = path.join(cwd(), '.github', 'ISSUE_TEMPLATE');
 
     //4. checkout to feature branch on local machine
     await checkoutToTargetBranch(BRANCH_NAME as string, {
-      onError: () => console.error(checkoutToTargetBranchErrorMessage({ BRANCH_NAME })),
+      onError: () => console.error(createCheckoutToTargetBranchErrorMessage({ BRANCH_NAME })),
     });
 
     //4-1. check origin repository remote alias
@@ -86,7 +86,7 @@ const ISSUE_TEMPLATE_PATH = path.join(cwd(), '.github', 'ISSUE_TEMPLATE');
     }
   } catch (err) {
     if (process.env.NODE_ENV === 'test') {
-      console.log('failed to create github issue', err);
+      console.log('\n🚫 Failed to create github issue', err);
     }
   }
 })();
@@ -148,7 +148,7 @@ async function createGitHubIssue(issueTemplate: string | null, issueTitle: strin
     });
 
     if (response.status === 422) {
-      return console.log(`🚫 status code : 422. This can happen for the following reasons\n
+      return console.log(`\n🚫 status code : 422. This can happen for the following reasons\n
 			1. No issue branch was created for pull request(or closed by cib cli). check your fork repository first\n
 			2. your request properties are not valid. check environment variables. (ex. ORIGIN_REPO_OWNER )\n
 			3. No change was detected. make change and commit first
@@ -156,7 +156,7 @@ async function createGitHubIssue(issueTemplate: string | null, issueTitle: strin
     }
 
     if (response.status !== 201) {
-      console.log('failed to receive success response, please check your env', response);
+      console.log('\n🚫 Failed to receive success response, please check your env', response);
       return false;
     } else {
       const data = (await response.json()) as any;
@@ -182,6 +182,6 @@ ${green}${bold}✨ Issue Created Successfully!${reset}
     }
   } catch (err) {
     console.error(err);
-    throw new Error('failed to create issue, check your env again');
+    throw new Error('\n🚫 Failed to create issue, check your env again');
   }
 }

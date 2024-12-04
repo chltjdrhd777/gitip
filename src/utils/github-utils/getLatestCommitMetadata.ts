@@ -30,5 +30,5 @@ export function getLatestCommitMetadata(getLatestCommitMetadataConfig?: GetLates
 }
 
 export function getLatestCommitMetadataErrorMessage() {
-  return `🚫 failed to load the latest commit data.`;
+  return `\n🚫 Failed to load the latest commit data.`;
 }

@@ -7,18 +7,25 @@ import {
   getLatestCommitMetadata,
   pushToTargetBranch,
   loadEnv,
+  createCheckIsRequiredVariablesExistErrorMessage,
+  createCurrentBranchNameErrorMessage,
+  createFindRemoteAliasErrorMessage,
+  getLatestCommitMetadataErrorMessage,
   CommitMetadata,
+  BranchMetadata,
 } from '@/utils';
+import { getPrefixEmoji } from '@/utils/pr-utils';
 
 //PREREQUISITE
 loadEnv();
 
 const GIT_ACCESS_TOKEN = process.env.GIT_ACCESS_TOKEN;
-const ORIGIN_REPO_OWNER = process.env.ORIGIN_REPO_OWNER;
+const UPSTREAM_REPO_OWNER = process.env.UPSTREAM_REPO_OWNER;
+const FORK_REPO_OWNER = process.env.FORK_REPO_OWNER;
 const REPO_NAME = process.env.REPO_NAME;
 const BRANCH_NAME = process.env.BRANCH_NAME;
 
-const GIT_API_URL = `https://api.github.com/repos/${ORIGIN_REPO_OWNER}/${REPO_NAME}/pulls`;
+const GIT_API_URL = `https://api.github.com/repos/${UPSTREAM_REPO_OWNER}/${REPO_NAME}/pulls`;
 
 (async () => {
   /**
@@ -26,60 +33,54 @@ const GIT_API_URL = `https://api.github.com/repos/${ORIGIN_REPO_OWNER}/${REPO_NA
    */
 
   //0. check variables required first
-  const isExistRequiredVars = checkIsRequiredVariablesExist({
-    GIT_ACCESS_TOKEN,
-    ORIGIN_REPO_OWNER,
-    REPO_NAME,
-    BRANCH_NAME,
-  });
-  if (!isExistRequiredVars.status) {
-    return console.log(
-      `🕹 please set the required variables on the ".env.{environment}"\n ${isExistRequiredVars.emptyVariableKeys
-        .map((e, i) => `${i + 1}. ${e}`)
-        .join('\n')}`,
-    );
-  }
+  checkIsRequiredVariablesExist(
+    {
+      GIT_ACCESS_TOKEN,
+      UPSTREAM_REPO_OWNER,
+      FORK_REPO_OWNER,
+      REPO_NAME,
+      BRANCH_NAME,
+    },
+    {
+      onError: (variables) => console.error(createCheckIsRequiredVariablesExistErrorMessage({ variables })),
+    },
+  );
 
   //1. get current branch name
-  const currentBranchName = getCurrentBranchName();
+  const currentBranchName = getCurrentBranchName({
+    onError: () => console.error(createCurrentBranchNameErrorMessage()),
+  });
 
-  //2. push current change log to origin branch
-  const originRepoAlias = findRemoteAlias(`${ORIGIN_REPO_OWNER}/${REPO_NAME}`);
-  if (!originRepoAlias) {
-    return console.log(
-      `🕹 No remote for "origin" branch. please add it first\nRun : \x1b[36mgit remote add origin {origin repository url}\x1b[0m`,
-    );
-  }
+  //2. push current change log to fork branch
+  const forkRepoRemoteAlias = findRemoteAlias(`${FORK_REPO_OWNER}/${REPO_NAME}`, {
+    onError: () => console.error(createFindRemoteAliasErrorMessage({ targetRepo: 'fork' })),
+  });
 
-  pushToTargetBranch(originRepoAlias, currentBranchName);
+  //3. push to current branch on fork repository
+  pushToTargetBranch(forkRepoRemoteAlias, currentBranchName);
 
   /**
    * @CREATE_PR
    */
 
-  const commitMetadata = getLatestCommitMetadata() as CommitMetadata;
-
-  if (commitMetadata === null) {
-    return console.log(`🕹 failed to load the latest commit data.`);
-  }
+  const commitMetadata = getLatestCommitMetadata({
+    onError: () => console.error(getLatestCommitMetadataErrorMessage()),
+  }) as CommitMetadata;
 
   //1. select prefix emoji
-  const emoji = getPrefixEmoji(commitMetadata.title);
+  const emoji = getPrefixEmoji(commitMetadata?.title);
 
   //2. generate Body
-  const branchMetadata = getCurrentBranchMetadata();
-  if (branchMetadata === null) {
-    return console.log(`🕹 failed to load the current branch metadata`);
-  }
+  const branchMetadata = getCurrentBranchMetadata() as BranchMetadata;
 
   //3. add close issue trigger to body
-  const PRBody = commitMetadata.body + `${commitMetadata.body ? '\n\n' : ''} close #${branchMetadata.issueNumber}`;
+  const PRBody = commitMetadata?.body + `${commitMetadata?.body ? '\n\n' : ''} close #${branchMetadata?.issueNumber}`;
 
   const requestBody = {
     title: `${emoji}${commitMetadata.title}`,
     body: PRBody,
     base: BRANCH_NAME, //pr destination
-    head: `${ORIGIN_REPO_OWNER}:${branchMetadata.branchName}`, //pr origin(from)
+    head: `${FORK_REPO_OWNER}:${branchMetadata.branchName}`, //pr origin(from)
   };
 
   //4. create PR
@@ -93,19 +94,6 @@ const GIT_API_URL = `https://api.github.com/repos/${ORIGIN_REPO_OWNER}/${REPO_NA
 /**
  * @helper
  */
-
-function getPrefixEmoji(title: string) {
-  let _emoji = '';
-
-  for (const [prefix, { emoji }] of Object.entries(PREFIX_MAP)) {
-    if (title.includes(prefix)) {
-      _emoji = emoji;
-      break;
-    }
-  }
-
-  return _emoji;
-}
 
 interface RequestBody {
   title: string;
@@ -125,9 +113,9 @@ async function createGitHubPR({ requestBody }: { requestBody: RequestBody }) {
     });
 
     if (response.status === 422) {
-      return console.log(`🚫 status code : 422. This can happen for the following reasons\n
-			1. No issue branch was created for pull request.check your origin repository first\n
-			2. your request properties are not valid. check environment variables. (ex. ORIGIN_REPO_OWNER )\n
+      return console.log(`\n🚫 status code : 422. This can happen for the following reasons\n
+			1. No issue branch was created for pull request.check your fork repository first\n
+			2. your request properties are not valid. check environment variables. (ex. FORK_REPO_OWNER )\n
 			3. No change was detected. make change and commit first
 			`);
     }
@@ -150,19 +138,19 @@ async function createGitHubPR({ requestBody }: { requestBody: RequestBody }) {
 async function assignPRToUser(prNumber: string) {
   try {
     const assignResponse = await fetch(
-      `https://api.github.com/repos/${ORIGIN_REPO_OWNER}/${REPO_NAME}/issues/${prNumber}/assignees`,
+      `https://api.github.com/repos/${UPSTREAM_REPO_OWNER}/${REPO_NAME}/issues/${prNumber}/assignees`,
       {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${GIT_ACCESS_TOKEN}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ assignees: [ORIGIN_REPO_OWNER] }),
+        body: JSON.stringify({ assignees: [FORK_REPO_OWNER] }),
       },
     );
 
     if (assignResponse.ok) {
-      console.log(`✨ Assignee added successfully: ${ORIGIN_REPO_OWNER}`);
+      console.log(`✨ Assignee added successfully: ${FORK_REPO_OWNER}`);
     } else {
       const errorData = await assignResponse.json();
       console.error(`\n🚫 Failed to add assignee: ${JSON.stringify(errorData)}`);

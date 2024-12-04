@@ -31,6 +31,6 @@ export async function checkoutToTargetBranch(
   }
 }
 
-export function checkoutToTargetBranchErrorMessage({ BRANCH_NAME = '' }: { BRANCH_NAME?: string }) {
-  return console.error(`\n🚫 failed to checkout ${BRANCH_NAME}`);
+export function createCheckoutToTargetBranchErrorMessage({ BRANCH_NAME = '' }: { BRANCH_NAME?: string }) {
+  return console.error(`\n🚫 Failed to checkout ${BRANCH_NAME}`);
 }

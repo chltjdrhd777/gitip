@@ -27,5 +27,5 @@ export function findRemoteAlias(targetPath: string, config?: findRemoteAliasConf
 }
 
 export function createFindRemoteAliasErrorMessage({ targetRepo }: { targetRepo: string }) {
-  return `🚫 No remote for "${targetRepo} repository". please add it first\nRun : \x1b[36mgit remote add {${targetRepo} repository alias} {${targetRepo} repository url}\x1b[0m`;
+  return `\n🚫 No remote for "${targetRepo} repository". please add it first\nRun : \x1b[36mgit remote add {${targetRepo} repository alias} {${targetRepo} repository url}\x1b[0m`;
 }

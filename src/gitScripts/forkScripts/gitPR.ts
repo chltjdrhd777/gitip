@@ -1,4 +1,4 @@
-import { PREFIX_MAP } from '@/constants/prefixMap';
+import { COLORS } from '@/constants/colors';
 import {
   checkIsRequiredVariablesExist,
   findRemoteAlias,
@@ -8,11 +8,17 @@ import {
   pushToTargetBranch,
   loadEnv,
   createCheckIsRequiredVariablesExistErrorMessage,
-  getCurrentBranchNameErrorMessage,
+  createCurrentBranchNameErrorMessage,
   createFindRemoteAliasErrorMessage,
   getLatestCommitMetadataErrorMessage,
   CommitMetadata,
+  BranchMetadata,
+  createPushToTargetBranchErrorMessage,
+  PROCESS_EXIT,
 } from '@/utils';
+import { getPRBody, getPRTitle, getPrefixEmoji, inquirePRTitle } from '@/utils/pr-utils';
+import { assignPRToUser } from '@/utils/pr-utils/assignPRToUser';
+import { createGitHubPR } from '@/utils/pr-utils/createGithubPR';
 
 //PREREQUISITE
 loadEnv();
@@ -26,150 +32,85 @@ const BRANCH_NAME = process.env.BRANCH_NAME;
 const GIT_API_URL = `https://api.github.com/repos/${UPSTREAM_REPO_OWNER}/${REPO_NAME}/pulls`;
 
 (async () => {
-  /**
-   * @PRE_SETTINGS
-   */
-
-  //0. check variables required first
-  checkIsRequiredVariablesExist(
-    {
-      GIT_ACCESS_TOKEN,
-      UPSTREAM_REPO_OWNER,
-      FORK_REPO_OWNER,
-      REPO_NAME,
-      BRANCH_NAME,
-    },
-    {
-      onError: (variables) => console.error(createCheckIsRequiredVariablesExistErrorMessage({ variables })),
-    },
-  );
-
-  //1. get current branch name
-  const currentBranchName = getCurrentBranchName({
-    onError: () => console.error(getCurrentBranchNameErrorMessage()),
-  });
-
-  //2. push current change log to fork branch
-  const forkRepoRemoteAlias = findRemoteAlias(`${FORK_REPO_OWNER}/${REPO_NAME}`, {
-    onError: () => console.error(createFindRemoteAliasErrorMessage({ targetRepo: 'fork' })),
-  });
-
-  //3. push to current branch on fork repository
-  pushToTargetBranch(forkRepoRemoteAlias, currentBranchName);
-
-  /**
-   * @CREATE_PR
-   */
-
-  const commitMetadata = getLatestCommitMetadata({
-    onError: () => console.error(getLatestCommitMetadataErrorMessage()),
-  }) as CommitMetadata;
-
-  //1. select prefix emoji
-  const emoji = getPrefixEmoji(commitMetadata.title);
-
-  //2. generate Body
-  const branchMetadata = getCurrentBranchMetadata();
-  if (branchMetadata === null) {
-    return console.log(`🕹 failed to load the current branch metadata`);
-  }
-
-  //3. add close issue trigger to body
-  const PRBody = commitMetadata.body + `${commitMetadata.body ? '\n\n' : ''} close #${branchMetadata.issueNumber}`;
-
-  const requestBody = {
-    title: `${emoji}${commitMetadata.title}`,
-    body: PRBody,
-    base: BRANCH_NAME, //pr destination
-    head: `${FORK_REPO_OWNER}:${branchMetadata.branchName}`, //pr origin(from)
-  };
-
-  //4. create PR
-  const prResponse = await createGitHubPR({ requestBody });
-
-  if (prResponse) {
-    await assignPRToUser(prResponse.number);
-  }
-})();
-
-/**
- * @helper
- */
-
-function getPrefixEmoji(title: string) {
-  let _emoji = '';
-
-  for (const [prefix, { emoji }] of Object.entries(PREFIX_MAP)) {
-    if (title.includes(prefix)) {
-      _emoji = emoji;
-      break;
-    }
-  }
-
-  return _emoji;
-}
-
-interface RequestBody {
-  title: string;
-  body: string;
-  base: string | undefined;
-  head: string | undefined;
-}
-async function createGitHubPR({ requestBody }: { requestBody: RequestBody }) {
   try {
-    const response = await fetch(GIT_API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/vnd.github+json',
-        Authorization: `Bearer ${GIT_ACCESS_TOKEN}`,
-      },
-      body: JSON.stringify(requestBody),
-    });
+    /**
+     * @PRE_SETTINGS
+     */
 
-    if (response.status === 422) {
-      return console.log(`🚫 status code : 422. This can happen for the following reasons\n
-			1. No issue branch was created for pull request.check your fork repository first\n
-			2. your request properties are not valid. check environment variables. (ex. FORK_REPO_OWNER )\n
-			3. No change was detected. make change and commit first
-			`);
-    }
-
-    const data = await response.json();
-    const isPrAlreadyExist = data.errors?.[0].message?.includes('A pull request already exists');
-
-    if (isPrAlreadyExist) {
-      return console.log('your pr already exist');
-    }
-
-    console.log(`your pr is created : ${data.html_url}`);
-    return data;
-  } catch (err) {
-    console.error(err);
-    throw new Error('fail to create PR');
-  }
-}
-
-async function assignPRToUser(prNumber: string) {
-  try {
-    const assignResponse = await fetch(
-      `https://api.github.com/repos/${UPSTREAM_REPO_OWNER}/${REPO_NAME}/issues/${prNumber}/assignees`,
+    //0. check variables required first
+    checkIsRequiredVariablesExist(
       {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${GIT_ACCESS_TOKEN}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ assignees: [FORK_REPO_OWNER] }),
+        GIT_ACCESS_TOKEN,
+        UPSTREAM_REPO_OWNER,
+        FORK_REPO_OWNER,
+        REPO_NAME,
+        BRANCH_NAME,
+      },
+      {
+        onError: (variables) => console.error(createCheckIsRequiredVariablesExistErrorMessage({ variables })),
       },
     );
 
-    if (assignResponse.ok) {
-      console.log(`✨ Assignee added successfully: ${FORK_REPO_OWNER}`);
-    } else {
-      const errorData = await assignResponse.json();
-      console.error(`\n🚫 Failed to add assignee: ${JSON.stringify(errorData)}`);
+    //1. get current branch name
+    const currentBranchName = getCurrentBranchName({
+      onError: () => console.error(createCurrentBranchNameErrorMessage()),
+    });
+
+    //2. push current change log to fork branch
+    const forkRepoRemoteAlias = findRemoteAlias(`${FORK_REPO_OWNER}/${REPO_NAME}`, {
+      onError: () => console.error(createFindRemoteAliasErrorMessage({ targetRepo: 'fork' })),
+    });
+
+    //3. push to current branch on fork repository
+    pushToTargetBranch(forkRepoRemoteAlias, currentBranchName, {
+      onError: () => console.error(createPushToTargetBranchErrorMessage({ FORK_REPO_OWNER, REPO_NAME })),
+    });
+
+    /**
+     * @CREATE_PR
+     */
+
+    // 1. extract commit metadata
+    const commitMetadata = getLatestCommitMetadata({
+      onError: () => console.error(getLatestCommitMetadataErrorMessage()),
+    }) as CommitMetadata;
+
+    //2. select prefix emoji
+    const emoji = getPrefixEmoji(commitMetadata?.title);
+
+    //3. extract branch metadata
+    const branchMetadata = getCurrentBranchMetadata() as BranchMetadata;
+
+    //4. create PR title and PR body
+    const PRTitleFromCommit = getPRTitle({ emoji, titleFromCommit: commitMetadata?.title });
+    const PRTitle = await inquirePRTitle({ defaultValue: PRTitleFromCommit });
+    const PRBody = getPRBody({
+      bodyFromCommit: commitMetadata?.body,
+      issueNumberFromBranch: branchMetadata?.issueNumber,
+    });
+
+    const requestBody = {
+      title: PRTitle,
+      body: PRBody,
+      base: BRANCH_NAME, //pr destination
+      head: `${FORK_REPO_OWNER}:${branchMetadata?.branchName}`, //pr origin(from)
+    };
+
+    //5. create PR
+    const prResponse = await createGitHubPR({ requestBody, prType: 'fork', GIT_API_URL, GIT_ACCESS_TOKEN });
+
+    if (prResponse) {
+      await assignPRToUser({
+        prNumber: prResponse.number,
+        UPSTREAM_REPO_OWNER,
+        FORK_REPO_OWNER,
+        REPO_NAME,
+        GIT_ACCESS_TOKEN,
+      });
     }
-  } catch (error: any) {
-    console.error(`Error adding assignee: ${error.message}`);
+  } catch (err) {
+    if (process.env.NODE_ENV === 'test') {
+      console.log('\n🚫 Failed to create github pull request', err);
+    }
   }
-}
+})();
