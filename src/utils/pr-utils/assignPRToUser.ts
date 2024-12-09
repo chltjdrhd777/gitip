@@ -4,6 +4,7 @@ import { PROCESS_EXIT } from '../common-utils';
 interface AssignPRToUserParams {
   prNumber: string;
   REPO_OWNER?: string;
+  ASSIGNEE?: string;
   REPO_NAME?: string;
   GIT_ACCESS_TOKEN?: string;
 }
@@ -11,6 +12,7 @@ interface AssignPRToUserParams {
 export async function assignPRToUser({
   prNumber,
   REPO_OWNER = '',
+  ASSIGNEE = '',
   REPO_NAME = '',
   GIT_ACCESS_TOKEN = '',
 }: AssignPRToUserParams) {
@@ -23,12 +25,12 @@ export async function assignPRToUser({
           Authorization: `Bearer ${GIT_ACCESS_TOKEN}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ assignees: [REPO_OWNER] }),
+        body: JSON.stringify({ assignees: [ASSIGNEE ?? REPO_OWNER] }),
       },
     );
 
     if (assignResponse.ok) {
-      console.log(createAssignPRToUserSuccessMessage({ assignee: REPO_OWNER }));
+      console.log(createAssignPRToUserSuccessMessage({ assignee: ASSIGNEE ?? REPO_OWNER }));
     } else {
       const errorData = await assignResponse.json();
       console.error(createAssignPRToUserErrorMessage(errorData));

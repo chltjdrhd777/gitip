@@ -131,12 +131,12 @@ async function createGitHubIssue(issueTemplate: string | null, issueTitle: strin
 
   if (issueTemplate && TEMPLATE_TITLE_PLACEHOLDER) {
     // separate markdown
-    const hypenSplittedGroup = String(issueTemplate)
+    const hyphenSplittedGroup = String(issueTemplate)
       .split('---')
       .map((section) => section.trim());
 
     // extract metadata
-    const templateMetadata = hypenSplittedGroup[1].split('\n').reduce((acc, cur) => {
+    const templateMetadata = hyphenSplittedGroup[1].split('\n').reduce((acc, cur) => {
       const [key, value] = cur.split(/:(.+)/, 2);
 
       if (key === 'assignees') {
@@ -153,7 +153,7 @@ async function createGitHubIssue(issueTemplate: string | null, issueTitle: strin
       return acc;
     }, {} as { [key: string]: any });
 
-    const templateBody = hypenSplittedGroup[2] ?? '';
+    const templateBody = hyphenSplittedGroup[2] ?? '';
 
     // update requestBody
     requestBody = { ...templateMetadata, body: templateBody };

@@ -11,3 +11,5 @@ export * from './getLatestCommitMetadata';
 export * from './installGithubCLI';
 export * from './pushToTargetBranch';
 export * from './syncForkBranchAndUpdateLocal';
+export * from './fetchBranchesWithPrune';
+export * from './extractRemoteIssueBranches';

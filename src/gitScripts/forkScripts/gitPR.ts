@@ -99,7 +99,8 @@ const GIT_API_URL = `https://api.github.com/repos/${UPSTREAM_REPO_OWNER}/${REPO_
     if (prResponse) {
       await assignPRToUser({
         prNumber: prResponse.number,
-        REPO_OWNER: FORK_REPO_OWNER,
+        REPO_OWNER: UPSTREAM_REPO_OWNER,
+        ASSIGNEE: FORK_REPO_OWNER,
         REPO_NAME,
         GIT_ACCESS_TOKEN,
       });

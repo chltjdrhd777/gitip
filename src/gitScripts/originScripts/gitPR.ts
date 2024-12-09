@@ -98,6 +98,7 @@ const GIT_API_URL = `https://api.github.com/repos/${ORIGIN_REPO_OWNER}/${REPO_NA
       await assignPRToUser({
         prNumber: prResponse.number,
         REPO_OWNER: ORIGIN_REPO_OWNER,
+        ASSIGNEE: ORIGIN_REPO_OWNER,
         REPO_NAME,
         GIT_ACCESS_TOKEN,
       });
