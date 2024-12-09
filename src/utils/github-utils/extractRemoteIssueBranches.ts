@@ -11,18 +11,18 @@ export default function extractRemoteIssueBranches(
 
   const allRemoteIssueBranches = executeCommand(`git branch -r | grep -E '${ISSUE_BRANCH_TO_CLEAN_PATTERN}'`, {
     exitWhenError: false,
-    onError: (err) => {
-      console.error(err);
+    onError: () => {
       console.error(createExtractRemoteIssueBranchesErrorMessage());
-      PROCESS_EXIT();
     },
-  })?.toString();
+  })
+    ?.toString()
+    .trim();
 
   if (!allRemoteIssueBranches) {
-    console.log(createNoIssueBranchesToCleanUpMessage());
-
     onSuccess?.();
-    PROCESS_EXIT();
+    return '';
+    // console.log(createNoIssueBranchesToCleanUpMessage());
+    // PROCESS_EXIT();
   }
 
   return allRemoteIssueBranches;
@@ -33,5 +33,5 @@ export function createNoIssueBranchesToCleanUpMessage() {
 }
 
 export function createExtractRemoteIssueBranchesErrorMessage() {
-  return `\n🚫 Failed to extract remote issue branches(branches with -#issueNumber suffix).\n please check your branches on fork repository first\n`;
+  return `\n🕹 No remote issue branches from remote cache(-r branches with -#issueNumber suffix). go on to the next step\n`;
 }
