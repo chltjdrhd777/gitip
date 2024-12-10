@@ -1,21 +1,23 @@
-import select from '@inquirer/select';
-
 import {
   checkIsRequiredVariablesExist,
-  checkGithubCLI,
-  installGithubCLI,
-  checkGithubAuth,
   checkoutToTargetBranch,
   findRemoteAlias,
   loadEnv,
+  inquireIssueType,
+  inquireIssueTitle,
+  getIssueTemplate,
+  replaceTitlePlaceholder,
+  inquireIssueBranchName,
+  createIssueBranchName,
+  createFindRemoteAliasErrorMessage,
+  createCheckIsRequiredVariablesExistErrorMessage,
+  createCheckoutToTargetBranchErrorMessage,
 } from '@/utils';
-import { readFileSync, readdirSync } from 'fs';
+
 import path from 'path';
 import { cwd } from 'process';
 import { exec } from 'child_process';
-
-import { input } from '@inquirer/prompts';
-import { DEFAULT_ISSUE_TEMPLATES } from '@/constants/defaultIssueTemplates';
+import { COLORS } from '@/constants/colors';
 
 /**@PRE_REQUISITE */
 loadEnv();
@@ -26,7 +28,6 @@ const REPO_NAME = process.env.REPO_NAME;
 const BRANCH_NAME = process.env.BRANCH_NAME;
 const TEMPLATE_TITLE_PLACEHOLDER = process.env.TEMPLATE_TITLE_PLACEHOLDER;
 const GIT_API_URL = `https://api.github.com/repos/${ORIGIN_REPO_OWNER}/${REPO_NAME}/issues`;
-
 const ISSUE_TEMPLATE_PATH = path.join(cwd(), '.github', 'ISSUE_TEMPLATE');
 
 (async () => {
@@ -36,42 +37,27 @@ const ISSUE_TEMPLATE_PATH = path.join(cwd(), '.github', 'ISSUE_TEMPLATE');
      */
 
     //1. check required variables
-    const isExistRequiredVars = checkIsRequiredVariablesExist({
-      GIT_ACCESS_TOKEN,
-      ORIGIN_REPO_OWNER,
-      REPO_NAME,
-      BRANCH_NAME,
+    checkIsRequiredVariablesExist(
+      {
+        GIT_ACCESS_TOKEN,
+        ORIGIN_REPO_OWNER,
+        REPO_NAME,
+        BRANCH_NAME,
+      },
+      {
+        onError: (variables) => console.error(createCheckIsRequiredVariablesExistErrorMessage({ variables })),
+      },
+    );
+
+    //4. checkout to feature branch on local machine
+    await checkoutToTargetBranch(BRANCH_NAME as string, {
+      onError: () => console.error(createCheckoutToTargetBranchErrorMessage({ BRANCH_NAME })),
     });
-    if (!isExistRequiredVars.status) {
-      return console.error(
-        `🕹 please set the required variables on the ".env.{environment}"\n${isExistRequiredVars.emptyVariablekeys
-          .map((e, i) => `${i + 1}. ${e}`)
-          .join('\n')}\n\n🕹  If variables already exist, please run this command from the root folder of your project`,
-      );
-    }
 
-    //2. check git CLI
-    const isGithubCLIExist = checkGithubCLI();
-    if (!isGithubCLIExist) {
-      await installGithubCLI();
-    }
-
-    //3. check git CLI login status
-    const isGithubCLILoggedIn = checkGithubAuth();
-    if (!isGithubCLILoggedIn) {
-      return console.error('🔐 Please auth login first to use gh.\nRun : \x1b[36mgh auth login\x1b[0m');
-    }
-
-    //4. checkout to feature branch from local machine
-    await checkoutToTargetBranch(BRANCH_NAME ?? '');
-
-    //4-1. check origin branch remote alias
-    const upstreamRemoteAlias = await findRemoteAlias(`${ORIGIN_REPO_OWNER}/${REPO_NAME}`);
-    if (!upstreamRemoteAlias) {
-      return console.error(
-        '🕹 No remote for "upstream" branch. please add it first\nRun : \x1b[36mgit remote add upstream {upstream repository url}\x1b[0m',
-      );
-    }
+    //4-1. check origin repository remote alias
+    findRemoteAlias(`${ORIGIN_REPO_OWNER}/${REPO_NAME}`, {
+      onError: () => console.error(createFindRemoteAliasErrorMessage({ targetRepo: 'origin' })),
+    });
 
     /**
      * @ISSUE_CREATION
@@ -79,27 +65,27 @@ const ISSUE_TEMPLATE_PATH = path.join(cwd(), '.github', 'ISSUE_TEMPLATE');
 
     // 1. inquiry
     const issueTypeTemplateFilename = await inquireIssueType();
-    const issueTitle = await inquirerIssueTitle();
+    const issueTitle = await inquireIssueTitle();
+    const issueBranchName = await inquireIssueBranchName();
 
     // 2. select proper template
     const issueTemplate = getIssueTemplate(path.join(ISSUE_TEMPLATE_PATH, issueTypeTemplateFilename));
 
     // 3. replace title placeholder
-    const titleReplacedTemplate = replaceTitlePlaceholder(issueTemplate, issueTitle);
+    const titleReplacedTemplate = replaceTitlePlaceholder(issueTemplate, issueTitle, TEMPLATE_TITLE_PLACEHOLDER);
 
     // 4. create issue and receive issue number
     const createIssueResult = await createGitHubIssue(titleReplacedTemplate, issueTitle);
 
     if (createIssueResult) {
       // 5. checkout
-      const { issueNumber, issueURL } = createIssueResult;
+      const { issueNumber } = createIssueResult;
 
-      exec(`git checkout -b issue-${issueNumber}`);
-      console.log(`✨ your issue is created : ${issueURL}`);
+      exec(`git checkout -b ${createIssueBranchName({ issueBranchName, issueNumber })}`);
     }
   } catch (err) {
     if (process.env.NODE_ENV === 'test') {
-      console.log('failed to create github issue', err);
+      console.log('\n🚫 Failed to create github issue', err);
     }
   }
 })();
@@ -107,68 +93,6 @@ const ISSUE_TEMPLATE_PATH = path.join(cwd(), '.github', 'ISSUE_TEMPLATE');
 /**
  * @helper
  */
-function readTemplateDirectory() {
-  try {
-    const templateFolderPath = './.github/ISSUE_TEMPLATE';
-    const templates = readdirSync(path.join(process.cwd(), templateFolderPath));
-
-    return templates.map((templateFileName) => ({
-      nmae: templateFileName,
-      value: templateFileName,
-    }));
-  } catch {
-    return null;
-  }
-}
-
-async function inquireIssueType() {
-  let choices = [];
-
-  const templates = readTemplateDirectory();
-
-  if (templates === null || templates.length === 0) {
-    choices = DEFAULT_ISSUE_TEMPLATES;
-  } else {
-    choices = templates;
-  }
-
-  const answer = await select({
-    message: 'what type of issue you want to create:',
-    choices,
-  });
-
-  return answer;
-}
-
-async function inquirerIssueTitle() {
-  const title = await input({
-    message: 'Enter issue title:',
-    validate: (value) => {
-      if (!value) return 'please enter the title';
-      return true;
-    },
-  });
-
-  return title;
-}
-
-function getIssueTemplate(url: string) {
-  try {
-    const templateContent = readFileSync(url, 'utf8');
-    return templateContent;
-  } catch (error) {
-    return null;
-  }
-}
-
-function replaceTitlePlaceholder(issueTemplate: string | null, issueTitle: string) {
-  if (!issueTemplate) return null;
-
-  if (TEMPLATE_TITLE_PLACEHOLDER) {
-    issueTemplate = issueTemplate.replace(TEMPLATE_TITLE_PLACEHOLDER, issueTitle);
-  }
-  return issueTemplate;
-}
 
 function unescapeUnicode(str: string) {
   const unicodeRegex = /\\[uU]([0-9a-fA-F]{4,8})/g;
@@ -184,12 +108,12 @@ async function createGitHubIssue(issueTemplate: string | null, issueTitle: strin
 
   if (issueTemplate && TEMPLATE_TITLE_PLACEHOLDER) {
     // separate markdown
-    const hypenSplittedGroup = String(issueTemplate)
+    const hyphenSplittedGroup = String(issueTemplate)
       .split('---')
       .map((section) => section.trim());
 
     // extract metadata
-    const templateMeatadata = hypenSplittedGroup[1].split('\n').reduce((acc, cur) => {
+    const templateMetadata = hyphenSplittedGroup[1].split('\n').reduce((acc, cur) => {
       const [key, value] = cur.split(/:(.+)/, 2);
 
       if (key === 'assignees') {
@@ -206,10 +130,10 @@ async function createGitHubIssue(issueTemplate: string | null, issueTitle: strin
       return acc;
     }, {} as { [key: string]: any });
 
-    const templateBody = hypenSplittedGroup[2] ?? '';
+    const templateBody = hyphenSplittedGroup[2] ?? '';
 
     // update requestBody
-    requestBody = { ...templateMeatadata, body: templateBody };
+    requestBody = { ...templateMetadata, body: templateBody };
   }
 
   try {
@@ -223,7 +147,7 @@ async function createGitHubIssue(issueTemplate: string | null, issueTitle: strin
     });
 
     if (response.status === 422) {
-      return console.log(`🚫 status code : 422. This can happen for the following reasons\n
+      return console.log(`\n🚫 status code : 422. This can happen for the following reasons\n
 			1. No issue branch was created for pull request(or closed by cib cli). check your fork repository first\n
 			2. your request properties are not valid. check environment variables. (ex. ORIGIN_REPO_OWNER )\n
 			3. No change was detected. make change and commit first
@@ -231,10 +155,24 @@ async function createGitHubIssue(issueTemplate: string | null, issueTitle: strin
     }
 
     if (response.status !== 201) {
-      console.log('failed to receive success response, please check your env', response);
+      console.log('\n🚫 Failed to receive success response, please check your env', response);
       return false;
     } else {
       const data = (await response.json()) as any;
+
+      const { bold, reset, cyan, green, yellow, magenta } = COLORS;
+
+      const baseBranch = magenta + (data.base || 'develop') + reset;
+      const headBranch = yellow + (data.head || 'feature/my-feature') + reset;
+
+      console.log(`
+${green}${bold}✨ Issue Created Successfully!${reset}
+🏷️  ${bold}Issue Number:${reset}  ${yellow}${data.number}${reset}
+🔗  ${bold}URL:${reset}           ${cyan}${data.html_url}${reset}
+📄  ${bold}Title:${reset}         ${yellow}${issueTitle}${reset}
+🌿  ${bold}Base Branch:${reset}   ${baseBranch}
+🌱  ${bold}Head Branch:${reset}   ${headBranch}
+`);
 
       return {
         issueNumber: data.number,
@@ -243,6 +181,6 @@ async function createGitHubIssue(issueTemplate: string | null, issueTitle: strin
     }
   } catch (err) {
     console.error(err);
-    throw new Error('failed to create issue, check your env again');
+    throw new Error('\n🚫 Failed to create issue, check your env again');
   }
 }

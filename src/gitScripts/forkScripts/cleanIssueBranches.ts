@@ -1,56 +1,56 @@
-import { findRemoteAlias } from '@/utils';
+import { createFindRemoteAliasErrorMessage, findRemoteAlias, sleep } from '@/utils';
 import { executeCommand } from '@/utils/common-utils/executeCommand';
+import extractIssueBranches from '@/utils/github-utils/extractIssueBranches';
+import extractRemoteIssueBranches from '@/utils/github-utils/extractRemoteIssueBranches';
+import fetchBranchesWithPrune, {
+  createFetchBranchesWithPruneErrorMessage,
+} from '@/utils/github-utils/fetchBranchesWithPrune';
 
 const ora = require('ora-classic');
 
 const FORK_REPO_OWNER = process.env.FORK_REPO_OWNER;
 const REPO_NAME = process.env.REPO_NAME;
+const ISSUE_BRANCH_TO_CLEAN_PATTERN = '(.*/)?[^/]+-#?[0-9]+$';
+const CLEANUP_SUCCESS_MESSAGE = '\n🧽 all issue branches are cleaned up';
 
 (async () => {
-  const spinner = ora('please wait for cleaning').start();
+  const spinner = ora('please wait for cleaning\n').start();
+  await sleep(1000);
 
-  await new Promise((resolve) => {
-    setTimeout(() => {
-      resolve('wait');
-    }, 1500);
+  //1. find remote alias for fork repository
+  const forkRepoRemoteAlias = findRemoteAlias(`${FORK_REPO_OWNER}/${REPO_NAME}`, {
+    onError: () => console.error(createFindRemoteAliasErrorMessage({ targetRepo: 'fork' })),
   });
 
-  //0. branch remote update and checkout
-  const forkRemoteAlias = await findRemoteAlias(`${FORK_REPO_OWNER}/${REPO_NAME}`);
-  if (!forkRemoteAlias) {
-    spinner.stop();
-
-    return console.log(
-      `🕹 No remote for "Fork" branch. please add it first\nRun : \x1b[36mgit remote add fork {fork repository url}\x1b[0m`,
-    );
-  }
-
-  executeCommand(`git fetch --prune ${forkRemoteAlias}`);
-  executeCommand('git checkout feature');
-
-  //1. delete all remote issue branches
-  const getAllOriginIssueBranches = executeCommand(`git branch -r | grep '${forkRemoteAlias}/issue-'`)?.toString();
-
-  if (!getAllOriginIssueBranches) {
-    spinner.stop();
-    return console.log('🧽 done');
-  }
-
-  const refinedBranchNames = getAllOriginIssueBranches
-    .split('\n')
-    .filter((e) => !!e)
-    .map((e) => e.trim().replace(/origin\//, ''));
-
-  refinedBranchNames.forEach(async (issueName) => {
-    executeCommand(`git push origin --delete ${issueName}`);
+  //2. fetch branches from fork repository (remove unused branches from local by --prune flag)
+  fetchBranchesWithPrune(forkRepoRemoteAlias, {
+    onError: () => console.error(createFetchBranchesWithPruneErrorMessage({ remoteAlias: forkRepoRemoteAlias })),
   });
 
-  //2. delete all local issue branches
-  executeCommand("git branch | grep 'issue-' | xargs git branch -D");
+  //3. extract all remote issue branches with -#issueNumber suffix
+  const allRemoteIssueBranches = extractIssueBranches(ISSUE_BRANCH_TO_CLEAN_PATTERN, {
+    target: 'remote',
+    onSuccess: () => spinner.stop(),
+  });
+  const refinedRemoteBranchNames = allRemoteIssueBranches.map((e) => e.trim().replace(`${forkRepoRemoteAlias}/`, ''));
 
-  //3. fetch latest feature branch
-  executeCommand('git fetch --prune origin');
+  //4. delete all remote issue branches (if exists)
+  refinedRemoteBranchNames.forEach((branchName) => {
+    executeCommand(`git push ${forkRepoRemoteAlias} --delete ${branchName}`, { exitWhenError: false });
+  });
+
+  //5. extract all local issue branches with -#issueNumber suffix
+  const allLocalIssueBranches = extractIssueBranches(ISSUE_BRANCH_TO_CLEAN_PATTERN, {
+    target: 'local',
+    onSuccess: () => spinner.stop(),
+  });
+  const refinedLocalBranchNames = allLocalIssueBranches.map((e) => e.trim());
+
+  //6. delete all local issue branches (if exists)
+  refinedLocalBranchNames.forEach((branchName) => {
+    executeCommand(`git branch -D ${branchName}`, { exitWhenError: false });
+  });
 
   spinner.stop();
-  console.log('🧽 done');
+  console.log(CLEANUP_SUCCESS_MESSAGE);
 })();

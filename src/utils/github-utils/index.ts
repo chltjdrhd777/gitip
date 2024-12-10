@@ -1,3 +1,4 @@
+export * from './checkCurrentBranch';
 export * from './checkBranchExistence';
 export * from './checkGithubAuth';
 export * from './checkGithubCLI';
@@ -9,4 +10,7 @@ export * from './getCurrentBranchName';
 export * from './getLatestCommitMetadata';
 export * from './installGithubCLI';
 export * from './pushToTargetBranch';
-export * from './syncForkBranchAndPullLocalBranch';
+export * from './syncForkBranchAndUpdateLocal';
+export * from './fetchBranchesWithPrune';
+export * from './extractIssueBranches';
+export * from './extractRemoteIssueBranches';

@@ -35,7 +35,7 @@ gitip
 // If there isn't, a default file is ".env"
 
 GIT_ACCESS_TOKEN = git access token.
-REMOTE_REPO_OWNER = the name of remote branch owner
+UPSTREAM_REPO_OWNER = the name of remote branch owner
 FORK_REPO_OWNER = the name of fork branch owner
 REPO_NAME = the repository name;
 BRANCH_NAME = the base(destination) branch name
