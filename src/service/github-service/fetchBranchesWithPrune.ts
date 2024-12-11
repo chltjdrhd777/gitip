@@ -1,5 +1,5 @@
 import { DefaultConfig } from '@/types';
-import { executeCommand } from '../common-utils';
+import { executeCommand } from '@/utils/common-utils';
 
 interface FetchBranchesWithPruneConfig extends DefaultConfig {}
 

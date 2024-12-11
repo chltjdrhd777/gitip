@@ -1,6 +1,6 @@
 import { DefaultConfig } from '@/types';
 import { executeCommand } from '@/utils/common-utils/executeCommand';
-import { PROCESS_EXIT } from '../common-utils';
+import { PROCESS_EXIT } from '@/utils/common-utils';
 
 interface findRemoteAliasConfig extends DefaultConfig {}
 

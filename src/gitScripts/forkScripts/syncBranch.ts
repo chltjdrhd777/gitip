@@ -1,6 +1,7 @@
 const ora = require('ora-classic');
 
-import { checkIsRequiredVariablesExist, getBranchList, loadEnv, sleep, syncForkBranchAndUpdateLocal } from '@/utils';
+import { getBranchList, syncForkBranchAndUpdateLocal } from '@/service';
+import { checkIsRequiredVariablesExist, loadEnv, sleep } from '@/utils';
 
 import select from '@inquirer/select';
 

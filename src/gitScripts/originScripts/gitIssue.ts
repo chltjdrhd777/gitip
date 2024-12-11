@@ -1,23 +1,25 @@
 import {
   checkIsRequiredVariablesExist,
-  checkoutToTargetBranch,
-  findRemoteAlias,
-  loadEnv,
   inquireIssueType,
   inquireIssueTitle,
   getIssueTemplate,
   replaceTitlePlaceholder,
   inquireIssueBranchName,
   createIssueBranchName,
-  createFindRemoteAliasErrorMessage,
   createCheckIsRequiredVariablesExistErrorMessage,
-  createCheckoutToTargetBranchErrorMessage,
+  loadEnv,
 } from '@/utils';
 
 import path from 'path';
 import { cwd } from 'process';
 import { exec } from 'child_process';
 import { COLORS } from '@/constants/colors';
+import {
+  checkoutToTargetBranch,
+  createCheckoutToTargetBranchErrorMessage,
+  createFindRemoteAliasErrorMessage,
+  findRemoteAlias,
+} from '@/service';
 
 /**@PRE_REQUISITE */
 loadEnv();

@@ -1,9 +1,6 @@
 import {
   checkIsRequiredVariablesExist,
-  checkoutToTargetBranch,
-  findRemoteAlias,
   loadEnv,
-  syncForkBranchAndUpdateLocal,
   inquireIssueType,
   inquireIssueTitle,
   getIssueTemplate,
@@ -11,15 +8,20 @@ import {
   inquireIssueBranchName,
   sleep,
   createIssueBranchName,
-  createFindRemoteAliasErrorMessage,
   createCheckIsRequiredVariablesExistErrorMessage,
-  createCheckoutToTargetBranchErrorMessage,
 } from '@/utils';
 
 import path from 'path';
 import { cwd } from 'process';
 import { exec } from 'child_process';
 import { COLORS } from '@/constants/colors';
+import {
+  checkoutToTargetBranch,
+  createCheckoutToTargetBranchErrorMessage,
+  findRemoteAlias,
+  createFindRemoteAliasErrorMessage,
+  syncForkBranchAndUpdateLocal,
+} from '@/service';
 
 const ora = require('ora-classic');
 

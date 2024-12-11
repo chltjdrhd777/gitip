@@ -1,7 +1,7 @@
 import { DefaultConfig } from '@/types';
-import { executeCommand } from '../common-utils/executeCommand'; // Adjust the import path as needed
+import { executeCommand } from '@/utils/common-utils/executeCommand'; // Adjust the import path as needed
 import { findRemoteAlias } from './findRemoteAlias';
-import { PROCESS_EXIT, log } from '../common-utils';
+import { PROCESS_EXIT, log } from '@/utils/common-utils';
 
 interface SyncForkBranchParams {
   UPSTREAM_REPO_OWNER?: string;

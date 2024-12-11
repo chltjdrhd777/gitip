@@ -1,10 +1,11 @@
-import { createFindRemoteAliasErrorMessage, findRemoteAlias, sleep } from '@/utils';
+import { sleep } from '@/utils';
 import { executeCommand } from '@/utils/common-utils/executeCommand';
-import extractIssueBranches from '@/utils/github-utils/extractIssueBranches';
-import extractRemoteIssueBranches from '@/utils/github-utils/extractRemoteIssueBranches';
+import extractIssueBranches from '@/service/github-service/extractIssueBranches';
+import extractRemoteIssueBranches from '@/service/github-service/extractRemoteIssueBranches';
 import fetchBranchesWithPrune, {
   createFetchBranchesWithPruneErrorMessage,
-} from '@/utils/github-utils/fetchBranchesWithPrune';
+} from '@/service/github-service/fetchBranchesWithPrune';
+import { createFindRemoteAliasErrorMessage, findRemoteAlias } from '@/service';
 
 const ora = require('ora-classic');
 

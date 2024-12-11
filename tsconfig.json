@@ -13,8 +13,9 @@
     "baseUrl": "./src",
     "paths": {
       "@/*": ["./*"],
+      "@/constants/*": ["constants/*"],
       "@/utils/*": ["utils/*"],
-      "@/constants/*": ["constants/*"]
+      "@/service/*": ["service/*"]
     }
   },
   "include": ["./src/**/*.ts"],

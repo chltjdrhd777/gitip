@@ -1,6 +1,6 @@
 import { DefaultConfig } from '@/types';
 import { getCurrentBranchName, createCurrentBranchNameErrorMessage } from './getCurrentBranchName';
-import { PROCESS_EXIT } from '../common-utils';
+import { PROCESS_EXIT } from '@/utils/common-utils';
 import { highlighted } from '@/constants/colors';
 
 export interface BranchMetadata {

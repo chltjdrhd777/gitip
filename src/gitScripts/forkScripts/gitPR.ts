@@ -1,19 +1,17 @@
 import {
-  checkIsRequiredVariablesExist,
+  BranchMetadata,
+  CommitMetadata,
+  createCurrentBranchNameErrorMessage,
+  createFindRemoteAliasErrorMessage,
+  createPushToTargetBranchErrorMessage,
   findRemoteAlias,
   getCurrentBranchMetadata,
   getCurrentBranchName,
   getLatestCommitMetadata,
-  pushToTargetBranch,
-  loadEnv,
-  createCheckIsRequiredVariablesExistErrorMessage,
-  createCurrentBranchNameErrorMessage,
-  createFindRemoteAliasErrorMessage,
   getLatestCommitMetadataErrorMessage,
-  CommitMetadata,
-  BranchMetadata,
-  createPushToTargetBranchErrorMessage,
-} from '@/utils';
+  pushToTargetBranch,
+} from '@/service';
+import { checkIsRequiredVariablesExist, loadEnv, createCheckIsRequiredVariablesExistErrorMessage } from '@/utils';
 import { getPRBody, getPRTitle, getPrefixEmoji, inquirePRTitle } from '@/utils/pr-utils';
 import { assignPRToUser } from '@/utils/pr-utils/assignPRToUser';
 import { createGitHubPR } from '@/utils/pr-utils/createGithubPR';

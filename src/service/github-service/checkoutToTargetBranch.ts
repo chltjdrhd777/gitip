@@ -2,7 +2,7 @@ import { executeCommand } from '@/utils/common-utils/executeCommand';
 import { checkBranchExistence } from './checkBranchExistence';
 import { checkCurrentBranch } from './checkCurrentBranch';
 import { Callbacks } from '@/types';
-import { PROCESS_EXIT } from '../common-utils';
+import { PROCESS_EXIT } from '@/utils/common-utils';
 
 interface CheckoutToTargetBranchConfig extends Callbacks {}
 
