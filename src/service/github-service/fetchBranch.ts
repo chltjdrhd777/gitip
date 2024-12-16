@@ -13,8 +13,6 @@ export default function fetchBranch(fetchBranchParams: FetchBranchParams, fetchB
 
   if (!remoteAlias) return;
 
-  console.log('fetch command:', `git fetch ${isPrune ? '--prune' : ''} ${remoteAlias}`);
-
   executeCommand(`git fetch ${isPrune ? '--prune' : ''} ${remoteAlias}`, fetchBranchesConfig);
 }
 
