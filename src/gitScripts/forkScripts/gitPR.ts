@@ -4,6 +4,7 @@ import {
   createCurrentBranchNameErrorMessage,
   createFindRemoteAliasErrorMessage,
   createPushToTargetBranchErrorMessage,
+  createPushToTargetBranchSuccessMessage,
   findRemoteAlias,
   getCurrentBranchMetadata,
   getCurrentBranchName,
@@ -11,8 +12,16 @@ import {
   getLatestCommitMetadataErrorMessage,
   pushToTargetBranch,
 } from '@/service';
-import { checkIsRequiredVariablesExist, loadEnv, createCheckIsRequiredVariablesExistErrorMessage } from '@/utils';
+import checkExistingPR from '@/service/github-service/checkExistingPR';
+
+import {
+  checkIsRequiredVariablesExist,
+  loadEnv,
+  createCheckIsRequiredVariablesExistErrorMessage,
+  PROCESS_EXIT,
+} from '@/utils';
 import { getPRBody, getPRTitle, getPrefixEmoji, inquirePRTitle } from '@/utils/pr-utils';
+import { askToUpdateExistingPR } from '@/utils/pr-utils/askToUpdateExistingPR';
 import { assignPRToUser } from '@/utils/pr-utils/assignPRToUser';
 import { createGitHubPR } from '@/utils/pr-utils/createGithubPR';
 
@@ -56,27 +65,61 @@ const GIT_API_URL = `https://api.github.com/repos/${UPSTREAM_REPO_OWNER}/${REPO_
       onError: () => console.error(createFindRemoteAliasErrorMessage({ targetRepo: 'fork' })),
     });
 
-    //3. push changes to current branch on fork repository
-    pushToTargetBranch(forkRepoRemoteAlias, currentBranchName, {
-      onError: () => console.error(createPushToTargetBranchErrorMessage({ REPO_OWNER: FORK_REPO_OWNER, REPO_NAME })),
-    });
+    // 3. extract commit metadata
+    const commitMetadata = getLatestCommitMetadata({
+      onError: () => console.error(getLatestCommitMetadataErrorMessage()),
+    }) as CommitMetadata;
+
+    //4. select prefix emoji
+    const emoji = getPrefixEmoji(commitMetadata?.title);
+
+    //5. extract branch metadata
+    const branchMetadata = getCurrentBranchMetadata() as BranchMetadata;
 
     /**
      * @CREATE_PR
      */
 
-    // 1. extract commit metadata
-    const commitMetadata = getLatestCommitMetadata({
-      onError: () => console.error(getLatestCommitMetadataErrorMessage()),
-    }) as CommitMetadata;
+    //1. check existing PR
+    await checkExistingPR(
+      {
+        repoOwner: UPSTREAM_REPO_OWNER,
+        repoName: REPO_NAME,
+        head: `${FORK_REPO_OWNER}:${branchMetadata?.branchName}`,
+        GIT_ACCESS_TOKEN,
+      },
+      {
+        onSuccess: async (targetPR) => {
+          if (targetPR) {
+            // TODO : config에 의한 분기처리(strict mode)
+            // 만약 strict mode일 경우 에러 메세지를 출력하고 프로세스를 종료한다. (새 변경점은 항상 새로운 pr에 해주세요)
+            // 현재는 ask question
+            await askToUpdateExistingPR({
+              branchName: currentBranchName,
+              prUrl: targetPR.html_url,
+              onConfirm: () => {
+                pushToTargetBranch(forkRepoRemoteAlias, currentBranchName, {
+                  onSuccess: () => {
+                    console.log(createPushToTargetBranchSuccessMessage());
+                    PROCESS_EXIT();
+                  },
+                  onError: () =>
+                    console.error(createPushToTargetBranchErrorMessage({ REPO_OWNER: FORK_REPO_OWNER, REPO_NAME })),
+                });
+              },
+              onCancel: PROCESS_EXIT,
+            });
+          }
+        },
+      },
+    );
 
-    //2. select prefix emoji
-    const emoji = getPrefixEmoji(commitMetadata?.title);
+    //2. push changes to current branch on fork repository
+    pushToTargetBranch(forkRepoRemoteAlias, currentBranchName, {
+      onError: () => console.error(createPushToTargetBranchErrorMessage({ REPO_OWNER: FORK_REPO_OWNER, REPO_NAME })),
+    });
 
-    //3. extract branch metadata
-    const branchMetadata = getCurrentBranchMetadata() as BranchMetadata;
-
-    //4. create PR title and PR body
+    //3. create PR title and PR body
     const PRTitleFromCommit = getPRTitle({ emoji, titleFromCommit: commitMetadata?.title });
     const PRTitle = await inquirePRTitle({ defaultValue: PRTitleFromCommit });
     const PRBody = getPRBody({
@@ -91,7 +134,7 @@ const GIT_API_URL = `https://api.github.com/repos/${UPSTREAM_REPO_OWNER}/${REPO_
       head: `${FORK_REPO_OWNER}:${branchMetadata?.branchName}`, //pr origin(from)
     };
 
-    //5. create PR
+    //4. create PR
     const prResponse = await createGitHubPR({ requestBody, prType: 'fork', GIT_API_URL, GIT_ACCESS_TOKEN });
 
     if (prResponse) {

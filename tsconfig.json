@@ -15,7 +15,8 @@
       "@/*": ["./*"],
       "@/constants/*": ["constants/*"],
       "@/utils/*": ["utils/*"],
-      "@/service/*": ["service/*"]
+      "@/service/*": ["service/*"],
+      "@/types/*": ["types/*"]
     }
   },
   "include": ["./src/**/*.ts"],

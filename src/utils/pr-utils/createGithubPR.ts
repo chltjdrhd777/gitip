@@ -1,4 +1,4 @@
-import { COLORS, highlighted } from '@/constants/colors';
+import { highlighted } from '@/constants/colors';
 import { PROCESS_EXIT } from '@/utils/common-utils';
 
 export interface PRRequestBody {

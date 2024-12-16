@@ -14,3 +14,4 @@ export * from './syncForkBranchAndUpdateLocal';
 export * from './fetchBranchesWithPrune';
 export * from './extractIssueBranches';
 export * from './extractRemoteIssueBranches';
+export * from './checkExistingPR';
