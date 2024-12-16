@@ -2,7 +2,7 @@ import { DefaultConfig } from '@/types';
 import { executeCommand } from '@/utils/common-utils/executeCommand';
 import { PROCESS_EXIT } from '@/utils/common-utils';
 
-interface findRemoteAliasConfig extends DefaultConfig {}
+interface findRemoteAliasConfig extends DefaultConfig<any, string> {}
 
 export function findRemoteAlias(targetPath: string, config?: findRemoteAliasConfig) {
   const { onSuccess, onError, exitWhenError = false } = config ?? {};
@@ -11,7 +11,7 @@ export function findRemoteAlias(targetPath: string, config?: findRemoteAliasConf
   // awk = text processing tool(space-separated)
   // print = print the matched line
   // $1 = first column
-  const remoteAlias = executeCommand(`git remote -v | grep '${targetPath}' | awk '{print $1}'`, {
+  const remoteAlias = executeCommand(`git remote -v | grep '${targetPath}' | awk '{print $1}' | head -n 1`, {
     exitWhenError,
   })
     ?.toString()
@@ -22,7 +22,7 @@ export function findRemoteAlias(targetPath: string, config?: findRemoteAliasConf
     PROCESS_EXIT();
   }
 
-  onSuccess?.();
+  onSuccess?.(remoteAlias);
   return (remoteAlias ?? '')?.split(/\n/)[0];
 }
 

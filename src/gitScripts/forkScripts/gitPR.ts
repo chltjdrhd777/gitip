@@ -15,15 +15,15 @@ import {
 import checkExistingPR from '@/service/github-service/checkExistingPR';
 
 import {
-  checkIsRequiredVariablesExist,
+  checkRequiredVariablesExist,
   loadEnv,
-  createCheckIsRequiredVariablesExistErrorMessage,
+  createCheckRequiredVariablesExistErrorMessage,
   PROCESS_EXIT,
 } from '@/utils';
 import { getPRBody, getPRTitle, getPrefixEmoji, inquirePRTitle } from '@/utils/pr-utils';
 import { askToUpdateExistingPR } from '@/utils/pr-utils/askToUpdateExistingPR';
 import { assignPRToUser } from '@/utils/pr-utils/assignPRToUser';
-import { createGitHubPR } from '@/utils/pr-utils/createGithubPR';
+import { createGitHubPR } from '@/service/github-service';
 
 //PREREQUISITE
 loadEnv();
@@ -32,7 +32,7 @@ const GIT_ACCESS_TOKEN = process.env.GIT_ACCESS_TOKEN;
 const UPSTREAM_REPO_OWNER = process.env.UPSTREAM_REPO_OWNER;
 const FORK_REPO_OWNER = process.env.FORK_REPO_OWNER;
 const REPO_NAME = process.env.REPO_NAME;
-const BRANCH_NAME = process.env.BRANCH_NAME;
+const DEFAULT_BRANCH_NAME = process.env.DEFAULT_BRANCH_NAME;
 const GIT_API_URL = `https://api.github.com/repos/${UPSTREAM_REPO_OWNER}/${REPO_NAME}/pulls`;
 
 (async () => {
@@ -42,16 +42,16 @@ const GIT_API_URL = `https://api.github.com/repos/${UPSTREAM_REPO_OWNER}/${REPO_
      */
 
     //0. check variables required first
-    checkIsRequiredVariablesExist(
+    checkRequiredVariablesExist(
       {
         GIT_ACCESS_TOKEN,
         UPSTREAM_REPO_OWNER,
         FORK_REPO_OWNER,
         REPO_NAME,
-        BRANCH_NAME,
+        DEFAULT_BRANCH_NAME,
       },
       {
-        onError: (variables) => console.error(createCheckIsRequiredVariablesExistErrorMessage({ variables })),
+        onError: (variables) => console.error(createCheckRequiredVariablesExistErrorMessage({ variables })),
       },
     );
 
@@ -130,7 +130,7 @@ const GIT_API_URL = `https://api.github.com/repos/${UPSTREAM_REPO_OWNER}/${REPO_
     const requestBody = {
       title: PRTitle,
       body: PRBody,
-      base: BRANCH_NAME, //pr destination
+      base: DEFAULT_BRANCH_NAME, //pr destination
       head: `${FORK_REPO_OWNER}:${branchMetadata?.branchName}`, //pr origin(from)
     };
 

@@ -2,6 +2,10 @@ import { DefaultConfig } from '@/types';
 import { executeCommand } from '@/utils/common-utils/executeCommand'; // Adjust the import path as needed
 import { findRemoteAlias } from './findRemoteAlias';
 import { PROCESS_EXIT, log } from '@/utils/common-utils';
+import fetchBranch, { createFetchBranchErrorMessage, createFetchBranchSuccessMessage } from './fetchBranch';
+import switchBranch, { createSwitchBranchErrorMessage, createSwitchBranchSuccessMessage } from './switchBranch';
+import { checkCurrentBranch } from './checkCurrentBranch';
+import { createCurrentBranchNameErrorMessage, getCurrentBranchName } from './getCurrentBranchName';
 
 interface SyncForkBranchParams {
   UPSTREAM_REPO_OWNER?: string;
@@ -48,33 +52,35 @@ export function syncForkBranchAndUpdateLocal({
     });
 
     // Fetch updates from the upstream repository
-
-    executeCommand(`git fetch ${upstreamRepoRemoteAlias}`, {
-      onSuccess: () => {
-        log(debug, () => console.log(`\n\n✅ Fetched upstream(${upstreamRepoRemoteAlias}) changes.`));
+    fetchBranch(
+      { remoteAlias: upstreamRepoRemoteAlias },
+      {
+        onSuccess: () => {
+          log(debug, () => console.log(createFetchBranchSuccessMessage({ remoteAlias: upstreamRepoRemoteAlias })));
+        },
+        onError: () => console.error(createFetchBranchErrorMessage({ remoteAlias: upstreamRepoRemoteAlias })),
+        execSyncOptions: {
+          stdio: 'ignore',
+        },
       },
-      onError: () => {
-        console.error(
-          `\n🚫 Failed to fetch: ${upstreamRepoRemoteAlias} when synchronizing with ${forkRepoRemoteAlias}.`,
-        );
-      },
-      execSyncOptions: {
-        stdio: 'ignore',
-      },
-    });
+    );
 
     // Switch to the target branch
-    executeCommand(`git checkout ${syncTargetBranch}`, {
-      onSuccess: () => {
-        log(debug, () => console.log(`✅ Checked out branch: ${syncTargetBranch}.`));
-      },
-      onError: () => {
-        console.error(`\n🚫 Failed to checkout branch: ${syncTargetBranch}. check your local branch list first.`);
-      },
-      execSyncOptions: {
-        stdio: 'ignore',
-      },
-    });
+    const currentBranch = getCurrentBranchName({ onError: () => console.error(createCurrentBranchNameErrorMessage()) });
+    if (currentBranch !== syncTargetBranch) {
+      switchBranch(
+        { branchName: syncTargetBranch },
+        {
+          onSuccess: () => {
+            log(debug, () => createSwitchBranchSuccessMessage({ branchName: syncTargetBranch }));
+          },
+          onError: () => console.error(() => createSwitchBranchErrorMessage({ branchName: syncTargetBranch })),
+          execSyncOptions: {
+            stdio: 'ignore',
+          },
+        },
+      );
+    }
 
     // Pull updates from the upstream branch
     executeCommand(`git pull ${upstreamRepoRemoteAlias} ${syncTargetBranch}`, {

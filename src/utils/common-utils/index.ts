@@ -1,4 +1,4 @@
-export * from './checkIsRequiredVariablesExist';
+export * from './checkRequiredVariablesExist';
 export * from './executeCommand';
 export * from './loadEnv';
 export * from './sleep';

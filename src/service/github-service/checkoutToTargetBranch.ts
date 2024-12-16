@@ -1,8 +1,8 @@
-import { executeCommand } from '@/utils/common-utils/executeCommand';
 import { checkBranchExistence } from './checkBranchExistence';
-import { checkCurrentBranch } from './checkCurrentBranch';
 import { Callbacks } from '@/types';
 import { PROCESS_EXIT } from '@/utils/common-utils';
+import switchBranch from './switchBranch';
+import { getCurrentBranchName } from './getCurrentBranchName';
 
 interface CheckoutToTargetBranchConfig extends Callbacks {}
 
@@ -13,17 +13,17 @@ export async function checkoutToTargetBranch(
   const { onError } = checkoutToTargetBranchConfig ?? {};
 
   try {
-    const currentBranch = checkCurrentBranch(checkoutToTargetBranchConfig);
-    const isExistFeatureBranch = await checkBranchExistence(branchName);
+    const currentBranch = getCurrentBranchName(checkoutToTargetBranchConfig);
+    const existTargetBranch = await checkBranchExistence(branchName);
 
-    if (!isExistFeatureBranch) {
-      console.log(`🕹 no ${branchName} branch, checkout to ${branchName} branch creating`);
-      executeCommand('git checkout -b feature', checkoutToTargetBranchConfig);
+    if (!existTargetBranch) {
+      switchBranch({ branchName, flags: ['-c'] }, checkoutToTargetBranchConfig);
+      return;
     }
 
-    if (currentBranch?.toString().replace(/\s/, '') !== branchName) {
-      console.log(`🕹 current branch is not ${branchName} branch, checkout to ${branchName} branch`);
-      executeCommand('git checkout feature', checkoutToTargetBranchConfig);
+    if (currentBranch !== branchName) {
+      switchBranch({ branchName }, checkoutToTargetBranchConfig);
+      return;
     }
   } catch (err) {
     onError?.(err);
@@ -31,6 +31,6 @@ export async function checkoutToTargetBranch(
   }
 }
 
-export function createCheckoutToTargetBranchErrorMessage({ BRANCH_NAME = '' }: { BRANCH_NAME?: string }) {
-  return console.error(`\n🚫 Failed to checkout ${BRANCH_NAME}`);
+export function createCheckoutToTargetBranchErrorMessage({ branchName = '' }: { branchName?: string }) {
+  return console.error(`\n🚫 Failed to switch to ${branchName}.`);
 }
