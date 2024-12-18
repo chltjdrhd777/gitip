@@ -13,8 +13,10 @@
     "baseUrl": "./src",
     "paths": {
       "@/*": ["./*"],
+      "@/constants/*": ["constants/*"],
       "@/utils/*": ["utils/*"],
-      "@/constants/*": ["constants/*"]
+      "@/service/*": ["service/*"],
+      "@/types/*": ["types/*"]
     }
   },
   "include": ["./src/**/*.ts"],

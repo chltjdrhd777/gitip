@@ -1,5 +1,5 @@
 import { highlighted } from '@/constants/colors';
-import { PROCESS_EXIT } from '../common-utils';
+import { PROCESS_EXIT } from '@/utils/common-utils';
 
 interface AssignPRToUserParams {
   prNumber: string;

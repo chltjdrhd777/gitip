@@ -23,3 +23,7 @@ export function createPushToTargetBranchErrorMessage({
 }) {
   return `\n🚫 Failed to push to ${REPO_OWNER}/${REPO_NAME} repository. please check your env again`;
 }
+
+export function createPushToTargetBranchSuccessMessage() {
+  return `\n✅ Pushed changes to target repository`;
+}

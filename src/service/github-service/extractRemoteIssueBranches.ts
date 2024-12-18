@@ -1,5 +1,5 @@
 import { DefaultConfig } from '@/types';
-import { PROCESS_EXIT, executeCommand } from '../common-utils';
+import { executeCommand } from '@/utils/common-utils';
 
 interface ExtractRemoteIssueBranchesConfig extends DefaultConfig {}
 
@@ -21,8 +21,6 @@ export default function extractRemoteIssueBranches(
   if (!allRemoteIssueBranches) {
     onSuccess?.();
     return '';
-    // console.log(createNoIssueBranchesToCleanUpMessage());
-    // PROCESS_EXIT();
   }
 
   return allRemoteIssueBranches;

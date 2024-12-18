@@ -1,10 +1,8 @@
-import { createFindRemoteAliasErrorMessage, findRemoteAlias, sleep } from '@/utils';
+import { createFindRemoteAliasErrorMessage, findRemoteAlias } from '@/service';
 import { executeCommand } from '@/utils/common-utils/executeCommand';
-import extractIssueBranches from '@/utils/github-utils/extractIssueBranches';
-import extractRemoteIssueBranches from '@/utils/github-utils/extractRemoteIssueBranches';
-import fetchBranchesWithPrune, {
-  createFetchBranchesWithPruneErrorMessage,
-} from '@/utils/github-utils/fetchBranchesWithPrune';
+import extractIssueBranches from '@/service/github-service/extractIssueBranches';
+import fetchBranch, { createFetchBranchErrorMessage } from '@/service/github-service/fetchBranch';
+import { sleep } from '@/utils';
 
 const ora = require('ora-classic');
 
@@ -23,9 +21,12 @@ const CLEANUP_SUCCESS_MESSAGE = '\n🧽 all issue branches are cleaned up';
   });
 
   //2. fetch branches from fork repository (remove unused branches from local by --prune flag)
-  fetchBranchesWithPrune(forkRepoRemoteAlias, {
-    onError: () => console.error(createFetchBranchesWithPruneErrorMessage({ remoteAlias: forkRepoRemoteAlias })),
-  });
+  fetchBranch(
+    { remoteAlias: forkRepoRemoteAlias },
+    {
+      onError: () => console.error(createFetchBranchErrorMessage({ remoteAlias: forkRepoRemoteAlias })),
+    },
+  );
 
   //3. extract all remote issue branches with -#issueNumber suffix
   const allRemoteIssueBranches = extractIssueBranches(ISSUE_BRANCH_TO_CLEAN_PATTERN, {

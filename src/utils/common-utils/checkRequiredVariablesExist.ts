@@ -6,11 +6,11 @@ interface Variables {
   emptyVariableKeys: string[];
 }
 
-interface CheckIsRequiredVariablesExistConfig extends Callbacks<Variables> {}
+interface CheckRequiredVariablesExistConfig extends Callbacks<Variables> {}
 
-export function checkIsRequiredVariablesExist(
+export function checkRequiredVariablesExist(
   requiredVariables: { [key: string]: string | undefined },
-  checkIsRequiredVariablesExistConfig?: CheckIsRequiredVariablesExistConfig,
+  checkRequiredVariablesExistConfig?: CheckRequiredVariablesExistConfig,
 ) {
   const variables = Object.entries(requiredVariables).reduce(
     (acc, [key, value]) => {
@@ -24,14 +24,14 @@ export function checkIsRequiredVariablesExist(
   );
 
   if (variables.status === false) {
-    checkIsRequiredVariablesExistConfig?.onError?.(variables);
+    checkRequiredVariablesExistConfig?.onError?.(variables);
     PROCESS_EXIT();
   }
 
   return variables;
 }
 
-export function createCheckIsRequiredVariablesExistErrorMessage({ variables }: { variables?: Variables }) {
+export function createCheckRequiredVariablesExistErrorMessage({ variables }: { variables?: Variables }) {
   return `🕹 please set the required variables on the ".env.{environment}"\n${(variables?.emptyVariableKeys ?? [])
     .map((e, i) => `${i + 1}. ${e}`)
     .join('\n')}\n\n🕹  If variables already exist, please run this command from the root folder of your project`;

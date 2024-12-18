@@ -1,10 +1,8 @@
 import { DefaultConfig } from '@/types';
-import { ExecSyncOptions, execSync } from 'child_process';
+import { execSync } from 'child_process';
 import { PROCESS_EXIT } from './PROCESS_EXIT';
 
-interface ExecuteCommandConfig extends DefaultConfig {
-  execSyncOptions?: ExecSyncOptions;
-}
+interface ExecuteCommandConfig extends DefaultConfig {}
 
 /**
  * child process studio 옵션 정리
@@ -21,7 +19,6 @@ export function executeCommand(command: string, executeCommandConfig: ExecuteCom
     onSuccess?.(executeResult);
     return executeResult;
   } catch (err) {
-    // console.error(`\n🚫 Command Failed: ${command}`);
     onError?.(err);
 
     if (exitWhenError) {

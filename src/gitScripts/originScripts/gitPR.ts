@@ -1,22 +1,20 @@
 import {
-  checkIsRequiredVariablesExist,
+  BranchMetadata,
+  CommitMetadata,
+  createCurrentBranchNameErrorMessage,
+  createFindRemoteAliasErrorMessage,
+  createPushToTargetBranchErrorMessage,
   findRemoteAlias,
   getCurrentBranchMetadata,
   getCurrentBranchName,
   getLatestCommitMetadata,
-  pushToTargetBranch,
-  loadEnv,
-  createCheckIsRequiredVariablesExistErrorMessage,
-  createCurrentBranchNameErrorMessage,
-  createFindRemoteAliasErrorMessage,
   getLatestCommitMetadataErrorMessage,
-  CommitMetadata,
-  BranchMetadata,
-  createPushToTargetBranchErrorMessage,
-} from '@/utils';
+  pushToTargetBranch,
+} from '@/service';
+import { checkRequiredVariablesExist, loadEnv, createCheckRequiredVariablesExistErrorMessage } from '@/utils';
 import { getPRBody, getPRTitle, getPrefixEmoji, inquirePRTitle } from '@/utils/pr-utils';
 import { assignPRToUser } from '@/utils/pr-utils/assignPRToUser';
-import { createGitHubPR } from '@/utils/pr-utils/createGithubPR';
+import { createGitHubPR } from '@/service/github-service';
 
 //PREREQUISITE
 loadEnv();
@@ -24,7 +22,7 @@ loadEnv();
 const GIT_ACCESS_TOKEN = process.env.GIT_ACCESS_TOKEN;
 const ORIGIN_REPO_OWNER = process.env.ORIGIN_REPO_OWNER;
 const REPO_NAME = process.env.REPO_NAME;
-const BRANCH_NAME = process.env.BRANCH_NAME;
+const DEFAULT_BRANCH_NAME = process.env.DEFAULT_BRANCH_NAME;
 const GIT_API_URL = `https://api.github.com/repos/${ORIGIN_REPO_OWNER}/${REPO_NAME}/pulls`;
 
 (async () => {
@@ -34,15 +32,15 @@ const GIT_API_URL = `https://api.github.com/repos/${ORIGIN_REPO_OWNER}/${REPO_NA
      */
 
     //0. check variables required first
-    checkIsRequiredVariablesExist(
+    checkRequiredVariablesExist(
       {
         GIT_ACCESS_TOKEN,
         ORIGIN_REPO_OWNER,
         REPO_NAME,
-        BRANCH_NAME,
+        DEFAULT_BRANCH_NAME,
       },
       {
-        onError: (variables) => console.error(createCheckIsRequiredVariablesExistErrorMessage({ variables })),
+        onError: (variables) => console.error(createCheckRequiredVariablesExistErrorMessage({ variables })),
       },
     );
 
@@ -87,7 +85,7 @@ const GIT_API_URL = `https://api.github.com/repos/${ORIGIN_REPO_OWNER}/${REPO_NA
     const requestBody = {
       title: PRTitle,
       body: PRBody,
-      base: BRANCH_NAME, //pr destination
+      base: DEFAULT_BRANCH_NAME, //pr destination
       head: `${ORIGIN_REPO_OWNER}:${branchMetadata?.branchName}`, //pr origin(from)
     };
 
