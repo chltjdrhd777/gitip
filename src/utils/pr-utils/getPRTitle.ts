@@ -4,5 +4,5 @@ interface GetPRTitleParams {
 }
 
 export function getPRTitle({ emoji, titleFromCommit }: GetPRTitleParams) {
-  return `${emoji} ${titleFromCommit}`;
+  return `${emoji}${titleFromCommit}`;
 }
