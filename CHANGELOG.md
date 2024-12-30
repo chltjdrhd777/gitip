@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.4.1](https://github.com/chltjdrhd777/gitip/compare/v1.4.0...v1.4.1) (2024-12-30)
+
+
+### Bug Fixes
+
+* version script path change ([cdafdbc](https://github.com/chltjdrhd777/gitip/commit/cdafdbc83396504a550fe82867283b2e264e83b4))
+
 ## 1.4.0 (2024-12-30)
 
 
