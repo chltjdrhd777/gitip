@@ -13,10 +13,14 @@ export async function originRepoHandler() {
       choices,
     }).run();
 
-    const command = spawn('node', [path.join(__dirname, originRepoCommandStore.getScriptSource(choice) as string)], {
-      stdio: 'inherit',
-      detached: false,
-    });
+    const command = spawn(
+      'node',
+      [path.resolve(__dirname, '../..', originRepoCommandStore.getScriptSource(choice) as string)],
+      {
+        stdio: 'inherit',
+        detached: false,
+      },
+    );
 
     command.on('close', (code) => {
       if (process.env.NODE_ENV === 'test') {

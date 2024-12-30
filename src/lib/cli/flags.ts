@@ -27,12 +27,5 @@ export async function setupCLI() {
     await forkRepoHandler();
   }
 
-  // Handle fork repository
-  // program.option('-f, --fork', 'Handle fork repository').action(async (options) => {
-  //   if (options.fork) {
-  //     await forkRepoHandler();
-  //   }
-  // });
-
   program.parse(process.argv);
 }
