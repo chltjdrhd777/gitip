@@ -1,17 +1,17 @@
 {
   "name": "gitip",
-  "version": "1.2.0",
+  "version": "1.4.3",
   "description": "auto generate git issue and pull request",
   "main": "./dist/index.js",
   "scripts": {
     "dev": "cross-env NODE_ENV=development ts-node ./src/index.ts",
-    "link": "rm -rf dist && npm run build && npm link",
+    "link:test": "rm -rf dist && npm run build && npm run set-package && npm link",
     "check:type": "tsc --noEmit",
     "check:lint": "npx eslint . --quiet --ignore-pattern '/dist/*'",
     "build": "node script/build.js",
     "set-package": "npx ts-node ./script/setupPackage.ts",
     "postinstall": "npx husky",
-    "release": "standard-version",
+    "versioning": "standard-version",
     "build-publish": "npm run build && npm run set-package && cd dist && npm publish"
   },
   "bin": {
@@ -34,6 +34,9 @@
   "devDependencies": {
     "@types/cli-progress": "^3.11.5",
     "@types/node": "^20.11.30",
+    "@commitlint/cli": "^19.6.1",
+    "@commitlint/config-conventional": "^19.6.0",
+    "commitlint-plugin-function-rules": "^4.0.1",
     "cross-env": "^7.0.3",
     "eslint-plugin-import": "^2.29.1",
     "standard-version": "^9.5.0",
@@ -46,6 +49,7 @@
     "@opentf/cli-pbar": "^0.7.2",
     "cli-progress": "^3.12.0",
     "cli-spinners": "^3.0.0",
+    "commander": "^12.1.0",
     "dotenv": "^16.4.5",
     "enquirer": "^2.4.1",
     "node-fetch": "^3.3.2",

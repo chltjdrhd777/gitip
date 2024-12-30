@@ -1,10 +1,11 @@
 {
   "compilerOptions": {
-    "target": "es2016",
-    "module": "CommonJS",
+    "module": "NodeNext",
+    "moduleResolution": "nodenext",
+    "target": "ESNext",
+    "esModuleInterop": true,
     "strict": true,
     "declaration": true,
-    "esModuleInterop": true,
     "skipLibCheck": true,
 
     "outDir": "./dist",
