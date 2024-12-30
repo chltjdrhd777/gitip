@@ -1,5 +1,5 @@
 const { Select } = require('enquirer');
-import { originRepoCommandStore } from './constants/command/commandMap';
+import { originRepoCommandStore } from '@/constants/command/commandMap';
 
 import path from 'path';
 import { spawn } from 'child_process';
