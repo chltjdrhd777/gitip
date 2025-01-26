@@ -3,9 +3,12 @@ import { originRepoCommandStore } from '@/constants/command/commandMap';
 
 import path from 'path';
 import { spawn } from 'child_process';
+import { GitipCommandType } from '@/types';
 
-export async function originRepoHandler() {
+export async function originRepoHandler(commandType?: GitipCommandType) {
   try {
+    const sourceByCommandType = originRepoCommandStore.getScriptSourceByCommandType(commandType);
+
     const choices = originRepoCommandStore.getAllCommandNames();
 
     const choice = await new Select({

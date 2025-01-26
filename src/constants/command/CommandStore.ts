@@ -1,5 +1,6 @@
 import { isNullish } from '@/utils/common-utils/isNullish';
 import { Command } from './Command';
+import { GitipCommandType } from '@/types';
 
 export class CommandStore<N extends string = string> {
   private commands: Map<N, string>;
@@ -30,6 +31,15 @@ export class CommandStore<N extends string = string> {
   /** 특정 커맨드 스크립트 source getter */
   getScriptSource(name: N): string | undefined {
     return this.commands.get(name);
+  }
+
+  /** commandType에 따른 특정 스크립트 source getter */
+  getScriptSourceByCommandType(commandType?: GitipCommandType): string | undefined {
+    const allCommandNames = this.getAllCommandNames();
+
+    const targetCommandName = allCommandNames.find((commandName) => commandName.includes(`[${commandType}]`)) as N;
+
+    return this.getScriptSource(targetCommandName);
   }
 
   /** 커맨드 삭제 */

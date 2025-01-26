@@ -3,8 +3,9 @@ const { Select } = require('enquirer');
 import path from 'path';
 import { spawn } from 'child_process';
 import { forkRepoCommandStore } from '@/constants/command/commandMap';
+import { GitipCommandType } from '@/types';
 
-export async function forkRepoHandler() {
+export async function forkRepoHandler(commandType?: GitipCommandType) {
   try {
     const choices = forkRepoCommandStore.getAllCommandNames();
 

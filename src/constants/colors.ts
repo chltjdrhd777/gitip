@@ -17,3 +17,11 @@ export const COLORS = {
 export const highlighted = (text: string, colors: Array<keyof typeof COLORS> = []) => {
   return `${colors?.map((color) => COLORS[color]).join('')}${text}${COLORS.reset}`;
 };
+
+export class ColorCode {
+  static bold = (text: string) => `${COLORS.bold}${text}${COLORS.reset}`;
+  static cyan = (text: string) => `${COLORS.cyan}${COLORS.bold}${text}${COLORS.reset}`;
+  static green = (text: string) => `${COLORS.green}${COLORS.bold}${text}${COLORS.reset}`;
+  static yellow = (text: string) => `${COLORS.yellow}${COLORS.bold}${text}${COLORS.reset}`;
+  static magenta = (text: string) => `${COLORS.magenta}${COLORS.bold}${text}${COLORS.reset}`;
+}

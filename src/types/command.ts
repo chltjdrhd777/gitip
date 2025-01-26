@@ -1,5 +1,7 @@
 import { ExecOptions, ExecSyncOptions } from 'child_process';
 
+export type GitipCommandType = 'issue' | 'pr' | 'sync' | 'clean';
+
 export interface Callbacks<ErrorArgs = any, SuccessArgs = any> {
   onSuccess?: (args?: SuccessArgs) => any;
   onError?: (args?: ErrorArgs) => any;
