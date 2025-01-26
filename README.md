@@ -106,11 +106,11 @@ This tool uses GitHub issue templates. If a template isn't available, the defaul
 
 Keep your fork updated with the origin branch effortlessly.
 
-> **Manual Method (Not Recommended)**:
-> <br/> > <img src="https://github.com/chltjdrhd777/image-hosting/blob/main/sync.png?raw=true" width="70%" />
+**😭 Manual Method (Not Recommended)**:
+<br/> <p align="center"><img src="https://github.com/chltjdrhd777/image-hosting/blob/main/sync.png?raw=true" width="70%" /></p>
 
-> **Recommended Method**:
-> <br/> > <img src="https://github.com/chltjdrhd777/image-hosting/blob/main/sync2.gif?raw=true" width="70%" />
+**☺️ Recommended Method (with gitip sync)**:
+<br/> <p align="center"><img src="https://github.com/chltjdrhd777/image-hosting/blob/main/sync2.gif?raw=true" width="70%" /></p>
 
 ### 🗑️ 4. Clean Up Unused Issue Branches
 
