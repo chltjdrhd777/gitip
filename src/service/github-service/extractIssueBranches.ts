@@ -3,16 +3,17 @@ import { executeCommand } from '@/utils/common-utils';
 
 interface ExtractIssueBranchesConfig extends DefaultConfig {
   target?: 'local' | 'remote';
+  replacer?: (branchName: string) => string; // Optional replacer function
 }
 
 export default function extractIssueBranches(
   ISSUE_BRANCH_TO_CLEAN_PATTERN: string,
   extractIssueBranchesConfig?: ExtractIssueBranchesConfig,
 ) {
-  const { onSuccess, target } = extractIssueBranchesConfig ?? {};
+  const { onSuccess, target, replacer } = extractIssueBranchesConfig ?? {};
   const flag = target === 'remote' ? '-r' : '';
 
-  const allRemoteIssueBranches = executeCommand(
+  const allIssueBranches = executeCommand(
     `git branch ${flag} | grep -E '${ISSUE_BRANCH_TO_CLEAN_PATTERN}' | sed 's/^\* //'`,
     {
       exitWhenError: false,
@@ -26,7 +27,10 @@ export default function extractIssueBranches(
 
   onSuccess?.();
 
-  return (allRemoteIssueBranches ?? '').split('\n').filter((e) => !!e);
+  return (allIssueBranches ?? '')
+    .split('\n')
+    .filter((e) => !!e) // Remove empty entries
+    .map((branch) => replacer?.(branch.trim()) ?? branch.trim()); // Apply trim and replacer
 }
 
 function createExtractRemoteIssueBranchesErrorMessage(target: ExtractIssueBranchesConfig['target']) {

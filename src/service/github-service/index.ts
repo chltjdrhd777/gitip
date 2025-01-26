@@ -12,6 +12,7 @@ export * from './extractRemoteIssueBranches';
 export * from './syncForkBranchAndUpdateLocal';
 export * from './switchBranch';
 export * from './deleteRemoteBranches';
+export * from './checkCurrentBranchIsIssueBranch';
 
 /** CLI */
 export * from './checkGithubAuth';

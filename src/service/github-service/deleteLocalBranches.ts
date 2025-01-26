@@ -1,4 +1,3 @@
-import { DefaultConfig } from '@/types';
 import { executeCommand, PROCESS_EXIT } from '@/utils';
 
 export function deleteLocalBranches(localBranchNames: string[]) {
@@ -6,16 +5,18 @@ export function deleteLocalBranches(localBranchNames: string[]) {
 
   try {
     localBranchNames.forEach((branchName) => {
-      executeCommand(`git branch -D ${branchName}`, {
+      executeCommand(`git branch -d ${branchName}`, {
         exitWhenError: false,
-        onError: () => deleteLocalBranchesErrorMessage(branchName),
       });
     });
+
+    return deleteLocalBranches;
   } catch {
+    createDeleteLocalBranchesErrorMessage();
     PROCESS_EXIT();
   }
 }
 
-export function deleteLocalBranchesErrorMessage(branchName: string) {
-  console.log(`👀 If your branch is issue branch to delete, please switch to the other branch and try again`);
+export function createDeleteLocalBranchesErrorMessage() {
+  return `\n🚫 Failed to delete local branches`;
 }
