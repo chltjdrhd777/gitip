@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.5.2](https://github.com/chltjdrhd777/gitip/compare/v1.5.1...v1.5.2) (2025-01-26)
+
+
+### Bug Fixes
+
+* check before clean ([fe762d0](https://github.com/chltjdrhd777/gitip/commit/fe762d08f325951cc4996a4b08f59bcf7d815b3a))
+
 ### [1.5.1](https://github.com/chltjdrhd777/gitip/compare/v1.5.0...v1.5.1) (2025-01-26)
 
 
