@@ -5,7 +5,7 @@ export function deleteLocalBranches(localBranchNames: string[]) {
 
   try {
     localBranchNames.forEach((branchName) => {
-      executeCommand(`git branch -d ${branchName}`, {
+      executeCommand(`git branch -D ${branchName}`, {
         exitWhenError: false,
       });
     });

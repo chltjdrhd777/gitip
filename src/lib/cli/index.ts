@@ -30,7 +30,7 @@ export class GitipCLIController {
     };
 
     this.program.option('-v, --version', 'Display the current version').action(actionHandler);
-    this.program.version('-v, --version', 'Display the current version').action(actionHandler);
+    this.program.command('version').action(actionHandler);
   }
 
   private setHelpCommand() {

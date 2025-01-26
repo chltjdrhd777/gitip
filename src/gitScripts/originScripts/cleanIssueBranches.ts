@@ -4,6 +4,7 @@ import extractIssueBranches from '@/service/github-service/extractIssueBranches'
 import fetchBranch, { createFetchBranchErrorMessage } from '@/service/github-service/fetchBranch';
 import {
   checkCurrentBranchIsIssueBranch,
+  confirmToDeleteBranches,
   createFindRemoteAliasErrorMessage,
   deleteRemoteBranches,
   findRemoteAlias,
@@ -20,6 +21,8 @@ const CLEANUP_SUCCESS_MESSAGE = '\n🧽 all issue branches are cleaned up';
 
 (async () => {
   checkCurrentBranchIsIssueBranch();
+
+  await confirmToDeleteBranches();
 
   const spinner = ora('please wait for cleaning\n').start();
   await sleep(1000);

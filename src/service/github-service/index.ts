@@ -13,6 +13,7 @@ export * from './syncForkBranchAndUpdateLocal';
 export * from './switchBranch';
 export * from './deleteRemoteBranches';
 export * from './checkCurrentBranchIsIssueBranch';
+export * from './confirmToDeleteBranches';
 
 /** CLI */
 export * from './checkGithubAuth';
