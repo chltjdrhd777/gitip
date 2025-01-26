@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.5.0](https://github.com/chltjdrhd777/gitip/compare/v1.4.4...v1.5.0) (2025-01-26)
+
+
+### Features
+
+* add commandline for shortcutt ([b6db525](https://github.com/chltjdrhd777/gitip/commit/b6db5259af4352809a1dae1577b291ece2f947c9))
+
+
+### Bug Fixes
+
+* update version for publishment ([be93ba2](https://github.com/chltjdrhd777/gitip/commit/be93ba285a789488f4b2196058bdefde7aec51ff))
+
 ### [1.4.4](https://github.com/chltjdrhd777/gitip/compare/v1.4.3...v1.4.4) (2025-01-26)
 
 
