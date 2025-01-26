@@ -1,136 +1,176 @@
-<h1 align="center"><strong>gitip</strong></h1>
+# 🌟 **gitip** 🌟
 
-<p> A handy tool to create github issue & pull request using command line</p>
+<p align="center">✨ A handy CLI tool to manage GitHub issues & pull requests with ease ✨</p>
 
-<img src="https://github.com/chltjdrhd777/image-hosting/blob/main/gitip.png?raw=true" title="title"></img>
+<p align="center">
+  <img src="https://github.com/chltjdrhd777/image-hosting/blob/main/gitip.png?raw=true" title="gitip-logo" width="70%" />
+</p>
 
-## Script
+## 🚀 **Getting Started**
+
+### Installation
 
 ```sh
-# setup
+# Install globally
 npm install gitip -g
-
-# 1. run without install
-npx gitip
-
-# 2. run with install globally
 gitip
 
-
-# flag
-"-o" : for origin repo system (default is fork repo system)
+# Or run directly with npx
+npx gitip
 ```
 
-## Before start
+### Usage
 
-<h4>📋 1. environment</h4>
-This tool works with fork repo system (default)
+```sh
+1. selection mode
+gitip
 
-<br>
+2. command mode
+gitip issue
+gitip pr
+gitip sync
+gitip clean
 
-If you want to use this tool with origin repo system, please run the **gitip** command with "-o" flag **(gitip -o)** and set the environment values like below
-
-<h4>📋 2. Before you start, you have to set the environment values on ".env.${NODE_ENV}"</h4>
-
-- 💡 fork repo system
-  ![env-file-fork](https://raw.githubusercontent.com/chltjdrhd777/image-hosting/refs/heads/main/gitip-fork-env.png)
-
-- 💡 origin repo system
-  ![env-file-origin](https://raw.githubusercontent.com/chltjdrhd777/image-hosting/refs/heads/main/gitip-origin-env.png)
-
-<br/>
-
-```ts
-// env description
-
-// 1. fork repo system
-GIT_ACCESS_TOKEN = git access token
-FORK_REPO_OWNER = the name of fork repository owner
-UPSTREAM_REPO_OWNER = the name of upstream repository owner
-REPO_NAME = the repository name
-DEFAULT_BRANCH_NAME = the branch name of default branch (repository setting)
-TEMPLATE_TITLE_PLACEHOLDER = (optional) issue template title placeholder
-
-// 2. origin repo system
-GIT_ACCESS_TOKEN = git access token
-ORIGIN_REPO_OWNER = the name of origin branch owner
-REPO_NAME = the repository name
-DEFAULT_BRANCH_NAME = the branch name of default branch (repository setting)
-TEMPLATE_TITLE_PLACEHOLDER = (optional) issue template title placeholder
+## Use with origin repository
+gitip -o
 ```
 
-<h4>📋 3. This tool uses issue template. If there isn't, it show the default issue template</h4>
+- **`-o` Flag:** Use this flag to manage the origin repository system (default is fork repo system).
 
-<img src="https://github.com/chltjdrhd777/image-hosting/blob/main/gitip-issuetemplate.png?raw=true" width="100%" title="template"></img>
+## 📋 **Environment Setup**
 
-If you want to use your template, you should set the `TEMPLATE_TITLE_PLACEHOLDER` variable on your .env file. It will uses that variable as an issue title placeholder.
+### 1. Environment Configuration
 
-<br/>
+By default, this tool works with the **fork repo system**. If you want to use it with the **origin repo system**, include the `-o` flag (`gitip -o`) and set the corresponding environment variables.
 
-## usage
+### 2. Environment Variables
 
-### 🖊️ 1. create an issue
+```env
+# Fork Repo System
+GIT_ACCESS_TOKEN=your-github-access-token
+FORK_REPO_OWNER=fork-repo-owner-name
+UPSTREAM_REPO_OWNER=upstream-repo-owner-name
+REPO_NAME=repository-name
+DEFAULT_BRANCH_NAME=default-branch-name
+TEMPLATE_TITLE_PLACEHOLDER=(optional) issue template title placeholder
 
-![auto-issue](https://github.com/chltjdrhd777/image-hosting/blob/main/create-issue.gif?raw=true)
+# Origin Repo System
+GIT_ACCESS_TOKEN=your-github-access-token
+ORIGIN_REPO_OWNER=origin-repo-owner-name
+REPO_NAME=repository-name
+DEFAULT_BRANCH_NAME=default-branch-name
+TEMPLATE_TITLE_PLACEHOLDER=(optional) issue template title placeholder
+```
 
-<img src="https://github.com/chltjdrhd777/image-hosting/blob/main/auto-issue.png?raw=true" title="create-issue-3"></img>
+### 3. Issue Templates
 
-<img src="https://github.com/chltjdrhd777/image-hosting/blob/main/create-issue2.png?raw=true" title="create-issue-3"></img>
+This tool uses GitHub issue templates. If a template isn't available, the default template will be used. To use a specific template, set the `TEMPLATE_TITLE_PLACEHOLDER` variable in your `.env` file.
 
-### 🖊️ 2. create a pull request
+<p align="center">
+  <img src="https://github.com/chltjdrhd777/image-hosting/blob/main/gitip-issuetemplate.png?raw=true" width="80%" title="issue-template" />
+</p>
 
-First of all, you need to commit your change
+## ✨ **Features**
 
-<img src="https://github.com/chltjdrhd777/image-hosting/blob/main/issue%20commit.png?raw=true" title="create-pr-1"></img>
+### 🖊️ 1. Create an Issue
 
-And, just select "create a pull request"
+- Easily create GitHub issues with just a few steps.
 
-- the title of a pull request comes from the latest commit
-- the body of a pull request comes from the latest commit either
-- If the pull request closed, it would close the issue together
+<p align="center">
+  <img src="https://github.com/chltjdrhd777/image-hosting/blob/main/create-issue.gif?raw=true" width="70%" />
+</p>
 
-![auto-pr](https://github.com/chltjdrhd777/image-hosting/blob/main/auto-pr.gif?raw=true)
-![pr-result](https://github.com/chltjdrhd777/image-hosting/blob/main/pr.png?raw=true)
+<p align="center">
+  <img src="https://github.com/chltjdrhd777/image-hosting/blob/main/auto-issue.png?raw=true" width="70%" />
+</p>
 
-<br/>
+### 📑 2. Create a Pull Request
 
-> ⚠️ Caveat<br/>
-> If you want to use "close" keyword to close related issue together, the base(destination) branch should be a default branch
+1. Commit your changes.
+2. Select "Create a pull request."
 
-![default-branch](https://github.com/chltjdrhd777/image-hosting/blob/main/gitip-default-branch.png?raw=true)
+- The pull request title and body are generated from your latest commit.
+- Related issues are automatically closed when the pull request is merged (if the base branch is the default branch).
 
-### 🖊️ 3. Synchronize a fork branch with origin branch
+<p align="center">
+  <img src="https://github.com/chltjdrhd777/image-hosting/blob/main/auto-pr.gif?raw=true" width="70%" />
+</p>
 
-If you need to update your fork branch whenever origin is updated, you can do it without visiting to your fork branch manually
+> ⚠️ **Note**: To use the "close" keyword for related issues, the base branch must be the default branch.
 
-> 😩 Not this
+<p align="center">
+  <img src="https://github.com/chltjdrhd777/image-hosting/blob/main/gitip-default-branch.png?raw=true" width="70%" />
+</p>
 
-![sync-unrecommanded](https://github.com/chltjdrhd777/image-hosting/blob/main/sync.png?raw=true)
+### 🔄 3. Synchronize Fork with Origin
 
-> 😀 But this
+Keep your fork updated with the origin branch effortlessly.
 
-![sync-recommended](https://github.com/chltjdrhd777/image-hosting/blob/main/sync2.gif?raw=true)
+> **Manual Method (Not Recommended)**:
+> <br/> > <img src="https://github.com/chltjdrhd777/image-hosting/blob/main/sync.png?raw=true" width="70%" />
 
-### 🖊️ 4. Remove unused issue branches
+> **Recommended Method**:
+> <br/> > <img src="https://github.com/chltjdrhd777/image-hosting/blob/main/sync2.gif?raw=true" width="70%" />
 
-When you are using gitip, maybe you would face the situation that there are bunch of redundant issue branches like below
+### 🗑️ 4. Clean Up Unused Issue Branches
 
-#### 1. 😩 local debris
+Remove unused branches locally and remotely with ease.
 
-![local-issue-debirs](https://github.com/chltjdrhd777/image-hosting/blob/main/issue-debris-from-local.png?raw=true)
+#### 1. Local Debris:
 
-#### 2. 😩 fork debris
+<p align="center">
+  <img src="https://github.com/chltjdrhd777/image-hosting/blob/main/issue-debris-from-local.png?raw=true" width="70%" />
+</p>
 
-![local-issue-debirs](https://github.com/chltjdrhd777/image-hosting/blob/main/issue-debris-from-fork.png?raw=true)
+#### 2. Fork Debris:
 
-If you should remove the unused branches, it takes time and effort. <br/>
-So, for you, you can remove them all at once like below
+<p align="center">
+  <img src="https://github.com/chltjdrhd777/image-hosting/blob/main/issue-debris-from-fork.png?raw=true" width="70%" />
+</p>
 
-#### 3. 😀 like this
+#### 3. Cleaned State:
 
-![clean-issue-branches](https://github.com/chltjdrhd777/image-hosting/blob/main/clean%20issue%20branches.gif?raw=true)
+<p align="center">
+  <img src="https://github.com/chltjdrhd777/image-hosting/blob/main/clean%20issue%20branches.gif?raw=true" width="70%" />
+</p>
 
-As a result, you meat the erased clean space
+<p align="center">
+  <img src="https://github.com/chltjdrhd777/image-hosting/blob/main/issue-clean2.png?raw=true" width="70%" />
+</p>
 
-![issue-clean](https://github.com/chltjdrhd777/image-hosting/blob/main/issue-clean2.png?raw=true)
-![issue-clean](https://github.com/chltjdrhd777/image-hosting/blob/main/issue-clean.png?raw=true)
+## 📜 **CLI Commands**
+
+### General Options:
+
+- **`-o, --origin`**: Use origin repository (default is fork).
+- **`-v, --version`**: Display the current version.
+- **`-h, --help`**: Show help message.
+
+### Commands:
+
+#### **`issue` | `i`**
+
+- Manage GitHub issues: Create, update, or retrieve issues.
+- **Usage**: `gitip issue [-o]`
+
+#### **`pr` | `p`**
+
+- Manage GitHub pull requests: Create, update, or list pull requests.
+- **Usage**: `gitip pr [-o]`
+
+#### **`sync` | `s`**
+
+- Synchronize your fork with the origin repository.
+- **Usage**: `gitip sync [-o]`
+
+#### **`clean` | `c`**
+
+- Remove unused branches locally or remotely.
+- **Usage**: `gitip clean [-o]`
+
+## 💡 **Pro Tips**
+
+- Use the `TEMPLATE_TITLE_PLACEHOLDER` environment variable to customize your issue titles.
+- Keep your `.env` files updated for both fork and origin systems.
+
+Enjoy managing your GitHub repositories with **gitip**! 😊

@@ -12,12 +12,15 @@ export default function extractIssueBranches(
   const { onSuccess, target } = extractIssueBranchesConfig ?? {};
   const flag = target === 'remote' ? '-r' : '';
 
-  const allRemoteIssueBranches = executeCommand(`git branch ${flag} | grep -E '${ISSUE_BRANCH_TO_CLEAN_PATTERN}'`, {
-    exitWhenError: false,
-    onError: () => {
-      console.error(createExtractRemoteIssueBranchesErrorMessage(target));
+  const allRemoteIssueBranches = executeCommand(
+    `git branch ${flag} | grep -E '${ISSUE_BRANCH_TO_CLEAN_PATTERN}' | sed 's/^\* //'`,
+    {
+      exitWhenError: false,
+      onError: () => {
+        console.error(createExtractRemoteIssueBranchesErrorMessage(target));
+      },
     },
-  })
+  )
     ?.toString()
     .trim();
 
@@ -27,5 +30,5 @@ export default function extractIssueBranches(
 }
 
 function createExtractRemoteIssueBranchesErrorMessage(target: ExtractIssueBranchesConfig['target']) {
-  return `\n 🕹 No remote issue branches from ${target}(-r branches with -#issueNumber suffix). go on to the next step\n`;
+  return `\n✅ No remote issue branches from ${target}(-r branches with -#issueNumber suffix). continue\n`;
 }

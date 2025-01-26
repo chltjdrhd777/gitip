@@ -69,9 +69,10 @@ export function createGitHubPRRequest422FailureMessage({ prType }: { prType: Cre
   const EXAMPLE_ENV_VARIABLE = prType === 'origin' ? 'ORIGIN_REPO_OWNER' : 'FORK_REPO_OWNER';
 
   return `\n🚫 ${highlighted('Status Code: 422', ['bold'])}. This can happen for the following reasons:\n
-  1️⃣ No issue branch was created for pull request. Check your ${prType} repository first.\n
-  2️⃣ Your request properties are not valid. Check environment variables (e.g., ${EXAMPLE_ENV_VARIABLE}).\n
-  3️⃣ No change was detected. Make changes and commit first.
+  1️⃣  The pull request for this issue branch already exists. Check your ${prType} repository first.\n
+  2️⃣  No issue branch was created for pull request. Check your ${prType} repository first.\n
+  3️⃣  Your request properties are not valid. Check environment variables (e.g., ${EXAMPLE_ENV_VARIABLE}).\n
+  4️⃣  No change was detected. Make changes and commit first. 
       `;
 }
 

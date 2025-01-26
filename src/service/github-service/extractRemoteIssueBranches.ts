@@ -31,5 +31,5 @@ export function createNoIssueBranchesToCleanUpMessage() {
 }
 
 export function createExtractRemoteIssueBranchesErrorMessage() {
-  return `\n🕹 No remote issue branches from remote cache(-r branches with -#issueNumber suffix). go on to the next step\n`;
+  return `\n✅ No remote issue branches from remote cache(-r branches with -#issueNumber suffix). continue\n`;
 }

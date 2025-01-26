@@ -1,14 +1,15 @@
-import { sleep } from '@/utils';
+import { PROCESS_EXIT, sleep } from '@/utils';
 import { executeCommand } from '@/utils/common-utils/executeCommand';
 import extractIssueBranches from '@/service/github-service/extractIssueBranches';
 import fetchBranch, { createFetchBranchErrorMessage } from '@/service/github-service/fetchBranch';
-import { createFindRemoteAliasErrorMessage, findRemoteAlias } from '@/service';
+import { createFindRemoteAliasErrorMessage, deleteRemoteBranches, findRemoteAlias } from '@/service';
+import { ISSUE_BRANCH_TO_CLEAN_PATTERN } from '@/constants/regularExpression';
+import { deleteLocalBranches } from '@/service/github-service/deleteLocalBranches';
 
 const ora = require('ora-classic');
 
 const ORIGIN_REPO_OWNER = process.env.ORIGIN_REPO_OWNER;
 const REPO_NAME = process.env.REPO_NAME;
-const ISSUE_BRANCH_TO_CLEAN_PATTERN = '(.*/)?[^/]+-#?[0-9]+$';
 const CLEANUP_SUCCESS_MESSAGE = '\n🧽 all issue branches are cleaned up';
 
 (async () => {
@@ -36,9 +37,7 @@ const CLEANUP_SUCCESS_MESSAGE = '\n🧽 all issue branches are cleaned up';
   const refinedRemoteBranchNames = allRemoteIssueBranches.map((e) => e.trim().replace(`${originRepoRemoteAlias}/`, ''));
 
   //4. delete all remote issue branches (if exists)
-  refinedRemoteBranchNames.forEach((branchName) => {
-    executeCommand(`git push ${originRepoRemoteAlias} --delete ${branchName}`, { exitWhenError: false });
-  });
+  deleteRemoteBranches(refinedRemoteBranchNames);
 
   //5. extract all local issue branches with -#issueNumber suffix
   const allLocalIssueBranches = extractIssueBranches(ISSUE_BRANCH_TO_CLEAN_PATTERN, {
@@ -48,9 +47,7 @@ const CLEANUP_SUCCESS_MESSAGE = '\n🧽 all issue branches are cleaned up';
   const refinedLocalBranchNames = allLocalIssueBranches.map((e) => e.trim());
 
   //6. delete all local issue branches (if exists)
-  refinedLocalBranchNames.forEach((branchName) => {
-    executeCommand(`git branch -D ${branchName}`, { exitWhenError: false });
-  });
+  deleteLocalBranches(refinedLocalBranchNames);
 
   spinner.stop();
   console.log(CLEANUP_SUCCESS_MESSAGE);

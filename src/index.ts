@@ -1,11 +1,11 @@
 import path from 'path';
 import dotenv from 'dotenv';
-import { setupCLI } from './lib/cli/flags';
+import { gitipCLIController } from './lib/cli';
 
 dotenv.config({ path: path.join(process.cwd(), '.env') });
 
 export async function main() {
-  await setupCLI();
+  await gitipCLIController.initializeCLI();
 }
 
 main();

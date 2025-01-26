@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.4.4](https://github.com/chltjdrhd777/gitip/compare/v1.4.3...v1.4.4) (2025-01-26)
+
+
+### Bug Fixes
+
+* fix regular expression for clean command ([cd02b14](https://github.com/chltjdrhd777/gitip/commit/cd02b146d962eee207e3b2a2c2f5f0d8fccd7a85))
+
 ### [1.4.3](https://github.com/chltjdrhd777/gitip/compare/v1.4.2...v1.4.3) (2024-12-30)
 
 
