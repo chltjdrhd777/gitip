@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.6.1](https://github.com/chltjdrhd777/gitip/compare/v1.6.0...v1.6.1) (2025-01-27)
+
+
+### Bug Fixes
+
+* version command ([3daee29](https://github.com/chltjdrhd777/gitip/commit/3daee29f80bd1352548a4d3bbf13cf88906d7803))
+
 ## [1.6.0](https://github.com/chltjdrhd777/gitip/compare/v1.5.3...v1.6.0) (2025-01-27)
 
 
