@@ -14,6 +14,7 @@ export * from './switchBranch';
 export * from './deleteRemoteBranches';
 export * from './checkCurrentBranchIsIssueBranch';
 export * from './confirmToDeleteBranches';
+export * from './getBranchDiff';
 
 /** CLI */
 export * from './checkGithubAuth';
