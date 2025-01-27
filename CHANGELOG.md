@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.6.0](https://github.com/chltjdrhd777/gitip/compare/v1.5.3...v1.6.0) (2025-01-27)
+
+
+### Features
+
+* add git-diff cheeck utility ([c8b1fe3](https://github.com/chltjdrhd777/gitip/commit/c8b1fe30396f338f37631c125aaa76d3fb0c847c))
+
+
+### Bug Fixes
+
+* migration eslint setting ([9f7ee00](https://github.com/chltjdrhd777/gitip/commit/9f7ee00ec7614271d8f2bd92a33488530d940e00))
+
 ### [1.5.3](https://github.com/chltjdrhd777/gitip/compare/v1.5.2...v1.5.3) (2025-01-26)
 
 ### [1.5.2](https://github.com/chltjdrhd777/gitip/compare/v1.5.1...v1.5.2) (2025-01-26)
