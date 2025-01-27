@@ -1,5 +1,5 @@
 import { Command } from 'commander';
-import { showVersion } from './versionHandler';
+import { getVersion, showVersion } from './versionHandler';
 import { PROCESS_EXIT } from '@/utils';
 import { GitipCommandType } from '@/types';
 import { forkRepoHandler, originRepoHandler } from './repoHandler';
@@ -24,13 +24,8 @@ export class GitipCLIController {
   }
 
   private setVersionCommand() {
-    const actionHandler = () => {
-      showVersion();
-      PROCESS_EXIT();
-    };
-
-    this.program.option('-v, --version', 'Display the current version').action(actionHandler);
-    this.program.command('version').action(actionHandler);
+    this.program.command('version').action(showVersion);
+    this.program.version(`🔔 Version: ${getVersion()}`, '-v, --version', 'Display the current version');
   }
 
   private setHelpCommand() {
