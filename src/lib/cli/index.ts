@@ -27,7 +27,7 @@ export class GitipCLIController {
   private printMode() {
     const isOrigin = envStore.hasOriginFlag();
 
-    console.log(`\n🔍 ${ColorCode.magenta('[Current mode]')}: ${isOrigin ? 'origin' : 'fork'}\n`);
+    console.log(`\n🔍 ${ColorCode.magenta('[Current mode]')}: ${ColorCode.white(isOrigin ? 'origin' : 'fork')}\n`);
   }
 
   private setVersionCommand() {
