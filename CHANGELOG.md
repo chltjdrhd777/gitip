@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.6.2](https://github.com/chltjdrhd777/gitip/compare/v1.6.1...v1.6.2) (2025-01-28)
+
+
+### Bug Fixes
+
+* create environment management store ([da0561d](https://github.com/chltjdrhd777/gitip/commit/da0561d16f8be31eb28860baa0643ab3fd25c438))
+* remove unused loadEnv function ([7db4926](https://github.com/chltjdrhd777/gitip/commit/7db4926fe74f9965ac9e03d50eacee9be8b57f37))
+
 ### [1.6.1](https://github.com/chltjdrhd777/gitip/compare/v1.6.0...v1.6.1) (2025-01-27)
 
 
