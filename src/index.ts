@@ -1,10 +1,9 @@
-import path from 'path';
-import dotenv from 'dotenv';
 import { gitipCLIController } from './lib/cli';
-
-dotenv.config({ path: path.join(process.cwd(), '.env') });
+import { envStore } from './service/environment';
 
 export async function main() {
+  envStore.load();
+
   await gitipCLIController.initializeCLI();
 }
 

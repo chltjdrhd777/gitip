@@ -1,8 +1,9 @@
 import { Command } from 'commander';
 import { getVersion, showVersion } from './versionHandler';
-import { PROCESS_EXIT } from '@/utils';
 import { GitipCommandType } from '@/types';
 import { forkRepoHandler, originRepoHandler } from './repoHandler';
+import { envStore } from '@/service/environment';
+import { ColorCode } from '@/constants/colors';
 
 export class GitipCLIController {
   private program: Command = new Command().name('gitip-cli');
@@ -23,6 +24,12 @@ export class GitipCLIController {
     this.setCleanCommand();
   }
 
+  private printMode() {
+    const isOrigin = envStore.hasOriginFlag();
+
+    console.log(`\n🔍 ${ColorCode.magenta('[Current mode]')}: ${isOrigin ? 'origin' : 'fork'}\n`);
+  }
+
   private setVersionCommand() {
     this.program.command('version').action(showVersion);
     this.program.version(`🔔 Version: ${getVersion()}`, '-v, --version', 'Display the current version');
@@ -38,11 +45,15 @@ export class GitipCLIController {
   }
 
   private setDefaultAction() {
-    const defaultActionHandler = async (flagOptions: Record<string, any>) => {
-      flagOptions.origin ? await originRepoHandler.run() : await forkRepoHandler.run();
+    const defaultActionHandler = async () => {
+      this.printMode();
+
+      const isOrigin = envStore.hasOriginFlag();
+
+      isOrigin ? await originRepoHandler.run() : await forkRepoHandler.run();
     };
 
-    this.program.option('-o, --origin', 'Handle origin repository').action(defaultActionHandler);
+    this.program.action(defaultActionHandler);
   }
 
   private setIssueCommand() {
@@ -63,13 +74,14 @@ export class GitipCLIController {
 
   /** helpers */
   private parseArgs = () => this.program.parse(process.argv);
-  private getOptionValues = () => this.program.opts();
 
   private mountCommand = (commandType: GitipCommandType, commandList: string[]) => {
     const actionHandler = async () => {
-      const flagOptions = this.getOptionValues();
+      this.printMode();
 
-      flagOptions.origin ? await originRepoHandler.run(commandType) : await forkRepoHandler.run(commandType);
+      const isOrigin = envStore.hasOriginFlag();
+
+      isOrigin ? await originRepoHandler.run(commandType) : await forkRepoHandler.run(commandType);
     };
 
     commandList.forEach((command) => {

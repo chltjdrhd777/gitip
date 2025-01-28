@@ -30,37 +30,73 @@ gitip issue
 gitip pr
 gitip sync
 gitip clean
-
-## Use with origin repository
-gitip -o
 ```
-
-- **`-o` Flag:** Use this flag to manage the origin repository system (default is fork repo system).
 
 ## 📋 **Environment Setup**
 
 ### 1. Environment Configuration
 
-By default, this tool works with the **fork repo system**. If you want to use it with the **origin repo system**, include the `-o` flag (`gitip -o`) and set the corresponding environment variables.
+By default, this tool operates in the **fork repo system** mode. ✨
 
-### 2. Environment Variables
+If you prefer to use the **origin repo system** mode, simply include the `ORIGIN_REPO_OWNER` variable in your `.env` file. When `ORIGIN_REPO_OWNER` is detected, the tool will automatically switch to **origin repo system** mode, allowing you to interact directly with the original repository. 🚀
+
+> - `fork repo system` = manage issues and pull requests in a **forked repository**
+> - `origin repo system` = manage issues and pull requests directly in the **original repository**
+
+---
+
+## 🔧 Example Configurations
+
+### 🔄 Environment Priority Loading
+
+This tool determines which `.env` file to load based on the following priority order:
+
+1. `.env.local`
+2. `.env.test`
+3. `.env.development`
+4. `.env.production`
+5. Any other `.env.*` file (e.g., `.env.staging`, `.env.custom`)
+6. `.env`
+
+If multiple `.env` files are present, the file with the highest priority will be loaded.
+
+---
+
+### 🔄 Fork Repo System Configuration
+
+Use the following setup for working with a **forked repository**:
 
 ```env
-# Fork Repo System
 GIT_ACCESS_TOKEN=your-github-access-token
 FORK_REPO_OWNER=fork-repo-owner-name
 UPSTREAM_REPO_OWNER=upstream-repo-owner-name
 REPO_NAME=repository-name
 DEFAULT_BRANCH_NAME=default-branch-name
 TEMPLATE_TITLE_PLACEHOLDER=(optional) issue template title placeholder
+```
 
-# Origin Repo System
+---
+
+### 🔗 Origin Repo System Configuration
+
+Use the following setup for working directly with the **original repository**:
+
+```env
 GIT_ACCESS_TOKEN=your-github-access-token
 ORIGIN_REPO_OWNER=origin-repo-owner-name
 REPO_NAME=repository-name
 DEFAULT_BRANCH_NAME=default-branch-name
 TEMPLATE_TITLE_PLACEHOLDER=(optional) issue template title placeholder
 ```
+
+---
+
+## 📝 Notes
+
+- ✅ If the `ORIGIN_REPO_OWNER` variable is present in the `.env` file, **gitip automatically switches to origin repo system mode**.
+- 🚫 If `ORIGIN_REPO_OWNER` is missing, the tool defaults to **fork repo system mode**.
+- 🔍 The tool checks for `.env` files in the current directory and loads them based on the priority described above.
+- ⚠️ Ensure all required variables are included in the selected `.env` file to avoid runtime errors.
 
 ### 3. Issue Templates
 

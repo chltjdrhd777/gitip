@@ -8,7 +8,6 @@ import {
   createFindRemoteAliasErrorMessage,
   deleteRemoteBranches,
   findRemoteAlias,
-  getCurrentBranchName,
 } from '@/service';
 import { ISSUE_BRANCH_TO_CLEAN_PATTERN } from '@/constants/regularExpression';
 import { deleteLocalBranches } from '@/service/github-service/deleteLocalBranches';
