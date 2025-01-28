@@ -14,20 +14,13 @@ import {
 } from '@/service';
 import checkExistingPR from '@/service/github-service/checkExistingPR';
 
-import {
-  checkRequiredVariablesExist,
-  loadEnv,
-  createCheckRequiredVariablesExistErrorMessage,
-  PROCESS_EXIT,
-} from '@/utils';
+import { checkRequiredVariablesExist, createCheckRequiredVariablesExistErrorMessage, PROCESS_EXIT } from '@/utils';
 import { getPRBody, getPRTitle, getPrefixEmoji, inquirePRTitle } from '@/utils/pr-utils';
 import { askToUpdateExistingPR } from '@/utils/pr-utils/askToUpdateExistingPR';
 import { assignPRToUser } from '@/utils/pr-utils/assignPRToUser';
 import { createGitHubPR } from '@/service/github-service';
 
-//PREREQUISITE
-loadEnv();
-
+/**@PRE_REQUISITE */
 const GIT_ACCESS_TOKEN = process.env.GIT_ACCESS_TOKEN;
 const UPSTREAM_REPO_OWNER = process.env.UPSTREAM_REPO_OWNER;
 const FORK_REPO_OWNER = process.env.FORK_REPO_OWNER;

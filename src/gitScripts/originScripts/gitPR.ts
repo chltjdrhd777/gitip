@@ -11,14 +11,12 @@ import {
   getLatestCommitMetadataErrorMessage,
   pushToTargetBranch,
 } from '@/service';
-import { checkRequiredVariablesExist, loadEnv, createCheckRequiredVariablesExistErrorMessage } from '@/utils';
+import { checkRequiredVariablesExist, createCheckRequiredVariablesExistErrorMessage } from '@/utils';
 import { getPRBody, getPRTitle, getPrefixEmoji, inquirePRTitle } from '@/utils/pr-utils';
 import { assignPRToUser } from '@/utils/pr-utils/assignPRToUser';
 import { createGitHubPR } from '@/service/github-service';
 
-//PREREQUISITE
-loadEnv();
-
+/**@PRE_REQUISITE */
 const GIT_ACCESS_TOKEN = process.env.GIT_ACCESS_TOKEN;
 const ORIGIN_REPO_OWNER = process.env.ORIGIN_REPO_OWNER;
 const REPO_NAME = process.env.REPO_NAME;

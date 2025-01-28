@@ -1,13 +1,11 @@
 const ora = require('ora-classic');
 
 import { getBranchList, syncForkBranchAndUpdateLocal } from '@/service';
-import { checkRequiredVariablesExist, loadEnv, sleep } from '@/utils';
+import { checkRequiredVariablesExist, sleep } from '@/utils';
 
 import select from '@inquirer/select';
 
-//PREREQUISITE
-loadEnv();
-
+/**@PRE_REQUISITE */
 const UPSTREAM_REPO_OWNER = process.env.UPSTREAM_REPO_OWNER;
 const FORK_REPO_OWNER = process.env.FORK_REPO_OWNER;
 const REPO_NAME = process.env.REPO_NAME;

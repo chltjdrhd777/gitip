@@ -14,6 +14,7 @@ import { deleteLocalBranches } from '@/service/github-service/deleteLocalBranche
 
 const ora = require('ora-classic');
 
+/**@PRE_REQUISITE */
 const ORIGIN_REPO_OWNER = process.env.ORIGIN_REPO_OWNER;
 const REPO_NAME = process.env.REPO_NAME;
 const CLEANUP_SUCCESS_MESSAGE = '\n🧽 all issue branches are cleaned up';
