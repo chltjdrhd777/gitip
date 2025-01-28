@@ -24,7 +24,7 @@ const CLEANUP_SUCCESS_MESSAGE = '\n🧽 all issue branches are cleaned up';
 
   await confirmToDeleteBranches();
 
-  const spinner = ora('please wait for cleaning\n').start();
+  const spinner = ora('\n🕖 please wait for cleaning\n\n').start();
   await sleep(1000);
 
   //1. find remote alias for fork repository
