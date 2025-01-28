@@ -10,7 +10,7 @@ export function checkCurrentBranchIsIssueBranch() {
     console.log(
       `🚫 current branch "[${ColorCode.magenta(
         currentBranchName,
-      )}]" is issue branch in the delete scope.\nplease switch to another branch and try again`,
+      )}]" is issue branch in the delete scope\n\nPlease switch to another branch and try again`,
     );
     PROCESS_EXIT();
   }
