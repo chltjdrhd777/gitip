@@ -4,7 +4,6 @@ import { findRemoteAlias } from './findRemoteAlias';
 import { PROCESS_EXIT, log } from '@/utils/common-utils';
 import fetchBranch, { createFetchBranchErrorMessage, createFetchBranchSuccessMessage } from './fetchBranch';
 import switchBranch, { createSwitchBranchErrorMessage, createSwitchBranchSuccessMessage } from './switchBranch';
-import { checkCurrentBranch } from './checkCurrentBranch';
 import { createCurrentBranchNameErrorMessage, getCurrentBranchName } from './getCurrentBranchName';
 
 interface SyncForkBranchParams {
@@ -87,10 +86,11 @@ export function syncForkBranchAndUpdateLocal({
       onSuccess: () => {
         log(debug, () => console.log(`✅ Pulled updates from ${upstreamRepoRemoteAlias}/${syncTargetBranch}.`));
       },
-      onError: () => {
+      onError: (error) => {
         console.error(
           `\n🚫 Failed to pull: ${syncTargetBranch} when synchronizing with ${upstreamRepoRemoteAlias}.\nPlease commit your changes or stash them before you merge.\nAborting`,
         );
+        console.error(error);
       },
       execSyncOptions: {
         stdio: 'ignore',
@@ -98,12 +98,13 @@ export function syncForkBranchAndUpdateLocal({
     });
 
     // Push updates to the forked repository
-    executeCommand(`git push ${forkRepoRemoteAlias} ${syncTargetBranch}`, {
+    executeCommand(`git push --force-with-lease ${forkRepoRemoteAlias} ${syncTargetBranch}`, {
       onSuccess: () => {
         log(debug, () => console.log(`✅ Pushed updates to ${forkRepoRemoteAlias}/${syncTargetBranch}.`));
       },
-      onError: () => {
+      onError: (error) => {
         console.error(`\n🚫 Failed to push: ${syncTargetBranch} when synchronizing with ${forkRepoRemoteAlias}.`);
+        console.error(error);
       },
       execSyncOptions: {
         stdio: 'ignore',
