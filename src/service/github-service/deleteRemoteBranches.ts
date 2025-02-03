@@ -1,7 +1,12 @@
 import { executeCommand, PROCESS_EXIT } from '@/utils';
 
-export function deleteRemoteBranches(remoteBranchNames: string[]) {
+export function deleteRemoteBranches(remoteBranchNames: string[], remoteAlias: string) {
   if (!remoteBranchNames.length) return;
+
+  if (!remoteAlias) {
+    console.error('❌ Remote alias is not provided. Please check your git remote list first');
+    PROCESS_EXIT();
+  }
 
   // 1. Verify Git authentication
   executeCommand('git ls-remote', {
@@ -19,7 +24,7 @@ export function deleteRemoteBranches(remoteBranchNames: string[]) {
 
   try {
     remoteBranchNames.forEach((branchName) => {
-      executeCommand(`git push origin --delete ${branchName}`, {
+      executeCommand(`git push ${remoteAlias} --delete ${branchName}`, {
         exitWhenError: false,
       });
     });

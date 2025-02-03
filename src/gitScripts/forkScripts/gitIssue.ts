@@ -5,7 +5,6 @@ import {
   getIssueTemplate,
   replaceTitlePlaceholder,
   inquireIssueBranchName,
-  sleep,
   createIssueBranchName,
   createCheckRequiredVariablesExistErrorMessage,
 } from '@/utils';
@@ -66,7 +65,6 @@ const ISSUE_TEMPLATE_PATH = path.join(cwd(), '.github', 'ISSUE_TEMPLATE');
 
     //4. sync fork branch with remote original branch and update local branch
     const spinner = ora(`🕹 syncing fork branch with upstream...`).start();
-    await sleep(500);
 
     syncForkBranchAndUpdateLocal({
       UPSTREAM_REPO_OWNER,
