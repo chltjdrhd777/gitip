@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.6.8](https://github.com/chltjdrhd777/gitip/compare/v1.6.7...v1.6.8) (2025-02-03)
+
+
+### Bug Fixes
+
+* clean 명령어 로컬에 없는 upstream remote 를 지우려고 하는 시도 필터링 ([1f8ff24](https://github.com/chltjdrhd777/gitip/commit/1f8ff2485476d65f56a504e1ee23af495005a444))
+* sigint error handling ([6ec1621](https://github.com/chltjdrhd777/gitip/commit/6ec16217540ba769d71d4853fab2d2da19878a47))
+
 ### [1.6.7](https://github.com/chltjdrhd777/gitip/compare/v1.6.6...v1.6.7) (2025-02-03)
 
 
