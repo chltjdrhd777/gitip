@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.6.7](https://github.com/chltjdrhd777/gitip/compare/v1.6.6...v1.6.7) (2025-02-03)
+
+
+### Bug Fixes
+
+* sync 제대로 되지 않던 문제 수정 ([37a7e9e](https://github.com/chltjdrhd777/gitip/commit/37a7e9ec8f022e69d183fbbaed0dde37cb98a00b))
+
 ### [1.6.6](https://github.com/chltjdrhd777/gitip/compare/v1.6.5...v1.6.6) (2025-01-28)
 
 
