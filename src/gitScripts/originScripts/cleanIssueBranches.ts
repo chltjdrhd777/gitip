@@ -1,5 +1,5 @@
-import { PROCESS_EXIT, sleep } from '@/utils';
-import { executeCommand } from '@/utils/common-utils/executeCommand';
+import { sleep } from '@/utils';
+
 import extractIssueBranches from '@/service/github-service/extractIssueBranches';
 import fetchBranch, { createFetchBranchErrorMessage } from '@/service/github-service/fetchBranch';
 import {
@@ -9,7 +9,6 @@ import {
   deleteRemoteBranches,
   findRemoteAlias,
 } from '@/service';
-import { ISSUE_BRANCH_TO_CLEAN_PATTERN } from '@/constants/regularExpression';
 import { deleteLocalBranches } from '@/service/github-service/deleteLocalBranches';
 
 const ora = require('ora-classic');
@@ -17,7 +16,7 @@ const ora = require('ora-classic');
 /**@PRE_REQUISITE */
 const ORIGIN_REPO_OWNER = process.env.ORIGIN_REPO_OWNER;
 const REPO_NAME = process.env.REPO_NAME;
-const CLEANUP_SUCCESS_MESSAGE = '\n🧽 all issue branches are cleaned up';
+const CLEANUP_SUCCESS_MESSAGE = '\n🧽 all cleanup process is finished';
 
 (async () => {
   checkCurrentBranchIsIssueBranch();
@@ -41,19 +40,23 @@ const CLEANUP_SUCCESS_MESSAGE = '\n🧽 all issue branches are cleaned up';
   );
 
   //3. delete all local issue branches (if exists)
-  const allLocalIssueBranches = extractIssueBranches(ISSUE_BRANCH_TO_CLEAN_PATTERN, {
-    target: 'local',
-    onSuccess: () => spinner.stop(),
-  });
+  const allLocalIssueBranches = extractIssueBranches(
+    { type: 'local' },
+    {
+      onSuccess: () => spinner.stop(),
+    },
+  );
   deleteLocalBranches(allLocalIssueBranches);
 
   //4. delete all remote issue branches (if exists)
-  const allRemoteIssueBranches = extractIssueBranches(ISSUE_BRANCH_TO_CLEAN_PATTERN, {
-    target: 'remote',
-    onSuccess: () => spinner.stop(),
-    replacer: (branchName) => branchName.replace(`${originRepoRemoteAlias}/`, ''),
-  });
-  deleteRemoteBranches(allRemoteIssueBranches);
+  const allRemoteIssueBranches = extractIssueBranches(
+    { type: 'remote', remoteAlias: originRepoRemoteAlias },
+    {
+      onSuccess: () => spinner.stop(),
+      replacer: (branchName) => branchName.replace(`${originRepoRemoteAlias}/`, ''),
+    },
+  );
+  deleteRemoteBranches(allRemoteIssueBranches, originRepoRemoteAlias);
 
   spinner.stop();
   console.log(CLEANUP_SUCCESS_MESSAGE);
