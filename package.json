@@ -1,6 +1,6 @@
 {
   "name": "gitip",
-  "version": "1.6.8",
+  "version": "1.7.0",
   "description": "auto generate git issue and pull request",
   "main": "./dist/index.js",
   "scripts": {

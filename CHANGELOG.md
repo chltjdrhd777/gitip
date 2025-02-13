@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.7.0](https://github.com/chltjdrhd777/gitip/compare/v1.6.8...v1.7.0) (2025-02-13)
+
+
+### Features
+
+* add init command for creating base env file ([6c4ad5b](https://github.com/chltjdrhd777/gitip/commit/6c4ad5be7e97d53b30505e3ea4f105109f7b4012))
+
 ### [1.6.8](https://github.com/chltjdrhd777/gitip/compare/v1.6.7...v1.6.8) (2025-02-03)
 
 
