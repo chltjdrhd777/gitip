@@ -49,12 +49,12 @@ const ISSUE_TEMPLATE_PATH = path.join(cwd(), '.github', 'ISSUE_TEMPLATE');
       },
     );
 
-    //2. checkout to feature branch on local machine
+    //2. checkout to DEFAULT_BRANCH_NAME branch on local machine
     await checkoutToTargetBranch(DEFAULT_BRANCH_NAME as string, {
       onError: () => console.error(createCheckoutToTargetBranchErrorMessage({ branchName: DEFAULT_BRANCH_NAME })),
     });
 
-    //3. check upstream repository remote alias
+    //3. check DEFAULT_BRANCH_NAME repository remote alias
     findRemoteAlias(`${ORIGIN_REPO_OWNER}/${REPO_NAME}`, {
       onSuccess: (remoteAlias) => {
         fetchBranch(
@@ -64,7 +64,7 @@ const ISSUE_TEMPLATE_PATH = path.join(cwd(), '.github', 'ISSUE_TEMPLATE');
           },
         );
       },
-      onError: () => console.error(createFindRemoteAliasErrorMessage({ targetRepo: 'upstream' })),
+      onError: () => console.error(createFindRemoteAliasErrorMessage({ targetRepo: 'origin' })),
     });
 
     /**

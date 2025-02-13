@@ -60,6 +60,8 @@ This tool determines which `.env` file to load based on the following priority o
 
 If multiple `.env` files are present, the file with the highest priority will be loaded.
 
+> 💡 If you want to initialize the environment variables required, It is recommended to use the `init` command.<br/> Please refer to the [**Commands**](#commands) section for more information.
+
 ---
 
 ### 🔄 Fork Repo System Configuration
@@ -183,6 +185,12 @@ Remove unused branches locally and remotely with ease.
 - **`-h, --help`**: Show help message.
 
 ### Commands:
+
+#### **`init`**
+
+- Initialize default `.env` file with required environment variables.
+- This command will create or update the `env` file in your current directory.
+- **Usage**: `gitip init`
 
 #### **`issue` | `i`**
 

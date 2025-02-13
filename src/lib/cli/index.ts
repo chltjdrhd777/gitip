@@ -18,6 +18,7 @@ export class GitipCLIController {
     this.setHelpCommand();
 
     this.setDefaultAction();
+    this.setInitCommand();
     this.setIssueCommand();
     this.setPullRequestCommand();
     this.setSyncCommand();
@@ -31,7 +32,7 @@ export class GitipCLIController {
   }
 
   private setVersionCommand() {
-    this.program.command('version').action(showVersion);
+    this.program.command('version').description('Show the current version').action(showVersion);
     this.program.version(`🔔 Version: ${getVersion()}`, '-v, --version', 'Display the current version');
   }
 
@@ -46,14 +47,23 @@ export class GitipCLIController {
 
   private setDefaultAction() {
     const defaultActionHandler = async () => {
-      this.printMode();
+      envStore.load();
 
       const isOrigin = envStore.hasOriginFlag();
+
+      this.printMode();
 
       isOrigin ? await originRepoHandler.run() : await forkRepoHandler.run();
     };
 
     this.program.action(defaultActionHandler);
+  }
+
+  private setInitCommand() {
+    this.program
+      .command('init')
+      .description('Initialize .env file with required environment variables')
+      .action(envStore.init);
   }
 
   private setIssueCommand() {
@@ -77,9 +87,11 @@ export class GitipCLIController {
 
   private mountCommand = (commandType: GitipCommandType, commandList: string[]) => {
     const actionHandler = async () => {
-      this.printMode();
+      envStore.load();
 
       const isOrigin = envStore.hasOriginFlag();
+
+      this.printMode();
 
       isOrigin ? await originRepoHandler.run(commandType) : await forkRepoHandler.run(commandType);
     };

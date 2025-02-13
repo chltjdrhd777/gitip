@@ -12,35 +12,46 @@ class EnvStore {
   private PRIORITY_ENV_PATTERNS_MAP = new Map<string, number>(
     this.PRIORITY_ENV_PATTERNS.map((pattern, idx) => [pattern, idx]),
   );
+  private DEFAULT_ENV_CONTENTS = {
+    GIT_ACCESS_TOKEN: '"your-github-access-token"',
+    REPO_NAME: '"repository-name"',
+    DEFAULT_BRANCH_NAME: '"default-branch-name"',
+    FORK_REPO_OWNER: '"set-this-for-fork-repo-system"', // fork 용
+    UPSTREAM_REPO_OWNER: '"set-this-for-fork-repo-system"', // fork 용
+    ORIGIN_REPO_OWNER: '"set-this-for-origin-repo-system"', // origin 용
+    TEMPLATE_TITLE_PLACEHOLDER: '"(optional) issue template title placeholder"',
+  };
 
   private envState: Record<string, string> = {};
 
-  load(): void {
+  public load = (): void => {
     const envNameToLoad = this.getEnvNameToLoad();
     const envFilePath = path.join(process.cwd(), envNameToLoad);
 
     dotenv.config({ path: envFilePath, processEnv: this.envState });
     Object.assign(process.env, this.envState);
-  }
+  };
 
-  get(key: string): string | undefined {
+  public get = (key: string): string | undefined => {
     return this.envState[key];
-  }
+  };
 
-  getAll(): Record<string, string> {
+  public getAll = (): Record<string, string> => {
     return { ...this.envState };
-  }
+  };
 
-  hasOriginFlag() {
+  public hasOriginFlag = () => {
     return Boolean(this.get(this.ORIGIN_REPO_FLAG));
-  }
+  };
 
   //helper
-  getEnvNameToLoad() {
+  public getEnvNameToLoad = (params?: { exitWhenError?: boolean }) => {
+    const { exitWhenError = true } = params ?? {};
+
     const currentDir = fs.readdirSync(process.cwd());
     const envFiles = currentDir.filter((file) => file.match(this.ENV_FILENAME_PATTERN));
 
-    if (!envFiles.length) {
+    if (!envFiles.length && exitWhenError) {
       console.log(
         `🚫 No .env file found in the current directory. Please create one:\n\n` +
           `💡 ${ColorCode.white('Environment file priorities:\n')}\n` +
@@ -68,7 +79,40 @@ class EnvStore {
     });
 
     return envFiles[0];
-  }
+  };
+
+  public init = (): void => {
+    const envNameToLoad = this.getEnvNameToLoad({ exitWhenError: false });
+
+    if (envNameToLoad) {
+      console.log(`👀 There is already environment file: ${ColorCode.white(envNameToLoad)}. Inserting missing keys...`);
+
+      const envFilePath = path.join(process.cwd(), envNameToLoad);
+      const envFileContent = fs.readFileSync(envFilePath, 'utf-8');
+      const parsedEnv = dotenv.parse(envFileContent); // 기존 env 값 파싱
+
+      const missingKeys = Object.entries(this.DEFAULT_ENV_CONTENTS)
+        .filter(([key]) => !parsedEnv[key]) // 존재하지 않는 키만 필터링
+        .map(([key, value]) => `${key}=${value}`);
+
+      if (missingKeys.length > 0) {
+        fs.appendFileSync(envFilePath, '\n' + missingKeys.join('\n') + '\n');
+        console.log(`✅ Updated .env file with missing keys.`);
+      } else {
+        console.log(`👌 .env file is already up-to-date.`);
+      }
+    } else {
+      console.log(`📄 Creating new ${ColorCode.white('.env')} file with default settings...`);
+
+      const defaultEnvContent = Object.entries(this.DEFAULT_ENV_CONTENTS)
+        .map(([key, value]) => `${key}=${value}`)
+        .join('\n');
+
+      fs.writeFileSync(path.join(process.cwd(), '.env'), '# gitip environment variables\n' + defaultEnvContent + '\n');
+
+      console.log(`🎉 Created new .env file successfully.`);
+    }
+  };
 }
 
 export const envStore = new EnvStore();

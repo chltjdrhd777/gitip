@@ -1,4 +1,4 @@
-import { highlighted } from '@/constants/colors';
+import { ColorCode, highlighted } from '@/constants/colors';
 import { PROCESS_EXIT } from '@/utils/common-utils';
 
 export interface PRRequestBody {
@@ -69,11 +69,16 @@ export function createGitHubPRRequest422FailureMessage({ prType }: { prType: Cre
   const EXAMPLE_ENV_VARIABLE = prType === 'origin' ? 'ORIGIN_REPO_OWNER' : 'FORK_REPO_OWNER';
 
   return `\n🚫 ${highlighted('Status Code: 422', ['bold'])}. This can happen for the following reasons:\n
-  1️⃣  The pull request for this issue branch already exists. Check your ${prType} repository first.\n
-  2️⃣  No issue branch was created for pull request. Check your ${prType} repository first.\n
-  3️⃣  Your request properties are not valid. Check environment variables (e.g., ${EXAMPLE_ENV_VARIABLE}).\n
-  4️⃣  No change was detected. Make changes and commit first. 
-      `;
+  - ${ColorCode.magenta(
+    'The pull request for this issue branch already exists.',
+  )} Check your ${prType} repository first.\n
+  - ${ColorCode.magenta('No issue branch was created for pull request.')} Check your ${prType} repository first.\n
+  - ${ColorCode.magenta(
+    'Your request properties are not valid.',
+  )} Check environment variables (e.g., ${EXAMPLE_ENV_VARIABLE}).\n
+  - ${ColorCode.magenta('No change was detected compared to the target branch.')} Make changes and commit first.
+  - ${ColorCode.magenta('No DEFAULT_BRANCH in your repository.')} Please make it first.    
+  `;
 }
 
 export function createAlreadyExistPRMessage() {
