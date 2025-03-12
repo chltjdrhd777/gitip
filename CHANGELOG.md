@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.7.1](https://github.com/chltjdrhd777/gitip/compare/v1.7.0...v1.7.1) (2025-03-12)
+
+
+### Bug Fixes
+
+* check the pr title on the merge title ([9c7b988](https://github.com/chltjdrhd777/gitip/commit/9c7b988c014554aa3146a4617d0ca06fc5570ea0))
+
 ## [1.7.0](https://github.com/chltjdrhd777/gitip/compare/v1.6.8...v1.7.0) (2025-02-13)
 
 
