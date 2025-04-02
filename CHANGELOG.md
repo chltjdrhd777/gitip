@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.7.2](https://github.com/chltjdrhd777/gitip/compare/v1.7.1...v1.7.2) (2025-04-02)
+
+
+### Bug Fixes
+
+* add cancel notification in sync command ([65a9b5b](https://github.com/chltjdrhd777/gitip/commit/65a9b5ba6642cb96c7100b547bf136530b5187cc))
+* handle the cancel error in try-catch block ([2c185ab](https://github.com/chltjdrhd777/gitip/commit/2c185ab61f1878407ed7d2c47a0378352c242a33))
+
 ### [1.7.1](https://github.com/chltjdrhd777/gitip/compare/v1.7.0...v1.7.1) (2025-03-12)
 
 
