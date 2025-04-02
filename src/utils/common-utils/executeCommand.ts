@@ -31,7 +31,7 @@ export function executeCommand(
       exec(command, execOptions, (error, stdout, stderr) => {
         if (error) {
           if (error.signal === 'SIGINT' || error.signal === 'SIGTSTP') {
-            console.warn(`👋 Process was interrupted by user (${error.signal}).`);
+            console.warn(`\n👋 Process was interrupted by user (${error.signal}).`);
             PROCESS_EXIT();
           }
 
@@ -55,7 +55,7 @@ export function executeCommand(
       return executeResult;
     } catch (error: any) {
       if (error.signal === 'SIGINT' || error.signal === 'SIGTSTP') {
-        console.warn(`👋 Process was interrupted by user (${error.signal}).`);
+        console.warn(`\n👋 Process was interrupted by user (${error.signal}).`);
         PROCESS_EXIT();
       }
 

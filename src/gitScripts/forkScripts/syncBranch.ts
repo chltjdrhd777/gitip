@@ -11,35 +11,43 @@ const FORK_REPO_OWNER = process.env.FORK_REPO_OWNER;
 const REPO_NAME = process.env.REPO_NAME;
 
 (async () => {
-  const isExistRequiredVars = checkRequiredVariablesExist({
-    UPSTREAM_REPO_OWNER,
-    FORK_REPO_OWNER,
-    REPO_NAME,
-  });
-  if (!isExistRequiredVars.status) {
-    return console.log(
-      `🕹 please set the required variables on the ".env.{environment}"\n ${isExistRequiredVars.emptyVariableKeys
-        .map((e, i) => `${i + 1}. ${e}`)
-        .join('\n')}`,
-    );
+  try {
+    const isExistRequiredVars = checkRequiredVariablesExist({
+      UPSTREAM_REPO_OWNER,
+      FORK_REPO_OWNER,
+      REPO_NAME,
+    });
+    if (!isExistRequiredVars.status) {
+      return console.log(
+        `🕹 please set the required variables on the ".env.{environment}"\n ${isExistRequiredVars.emptyVariableKeys
+          .map((e, i) => `${i + 1}. ${e}`)
+          .join('\n')}`,
+      );
+    }
+
+    const targetBranch = await askTargetBranchToSync();
+
+    const spinner = ora('please wait for cleaning...').start();
+    await sleep(1000);
+
+    syncForkBranchAndUpdateLocal({
+      UPSTREAM_REPO_OWNER,
+      FORK_REPO_OWNER,
+      REPO_NAME,
+      syncTargetBranch: targetBranch,
+      config: {
+        onSuccess: () => console.log('✅ done'),
+      },
+    });
+
+    spinner.stop();
+  } catch (error: any) {
+    if (error?.name === 'ExitPromptError' || error?.message?.includes('User force closed the prompt')) {
+      console.log('\n👋 Process was interrupted by user');
+    } else {
+      console.error('🚫 Unexpected error:', error);
+    }
   }
-
-  const targetBranch = await askTargetBranchToSync();
-
-  const spinner = ora('please wait for cleaning...').start();
-  await sleep(1000);
-
-  syncForkBranchAndUpdateLocal({
-    UPSTREAM_REPO_OWNER,
-    FORK_REPO_OWNER,
-    REPO_NAME,
-    syncTargetBranch: targetBranch,
-    config: {
-      onSuccess: () => console.log('✅ done'),
-    },
-  });
-
-  spinner.stop();
 })();
 
 /**
