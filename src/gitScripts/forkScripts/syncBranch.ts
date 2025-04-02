@@ -1,7 +1,8 @@
 const ora = require('ora-classic');
 
+import { MESSAGE } from '@/constants/message';
 import { getBranchList, syncForkBranchAndUpdateLocal } from '@/service';
-import { checkRequiredVariablesExist, sleep } from '@/utils';
+import { cancel, checkRequiredVariablesExist, sleep } from '@/utils';
 
 import select from '@inquirer/select';
 
@@ -42,11 +43,9 @@ const REPO_NAME = process.env.REPO_NAME;
 
     spinner.stop();
   } catch (error: any) {
-    if (error?.name === 'ExitPromptError' || error?.message?.includes('User force closed the prompt')) {
-      console.log('\n👋 Process was interrupted by user');
-    } else {
-      console.error('🚫 Unexpected error:', error);
-    }
+    cancel(error);
+
+    console.error('🚫 Unexpected error:', error);
   }
 })();
 

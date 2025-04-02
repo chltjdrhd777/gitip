@@ -14,7 +14,12 @@ import {
 } from '@/service';
 import checkExistingPR from '@/service/github-service/checkExistingPR';
 
-import { checkRequiredVariablesExist, createCheckRequiredVariablesExistErrorMessage, PROCESS_EXIT } from '@/utils';
+import {
+  cancel,
+  checkRequiredVariablesExist,
+  createCheckRequiredVariablesExistErrorMessage,
+  PROCESS_EXIT,
+} from '@/utils';
 import { getPRBody, getPRTitle, getPrefixEmoji, inquirePRTitle } from '@/utils/pr-utils';
 import { askToUpdateExistingPR } from '@/utils/pr-utils/askToUpdateExistingPR';
 import { assignPRToUser } from '@/utils/pr-utils/assignPRToUser';
@@ -139,9 +144,11 @@ const GIT_API_URL = `https://api.github.com/repos/${UPSTREAM_REPO_OWNER}/${REPO_
         GIT_ACCESS_TOKEN,
       });
     }
-  } catch (err) {
+  } catch (error) {
+    cancel(error);
+
     if (process.env.NODE_ENV === 'test') {
-      console.log('\n🚫 Failed to create github pull request', err);
+      console.log('\n🚫 Failed to create github pull request', error);
     }
   }
 })();

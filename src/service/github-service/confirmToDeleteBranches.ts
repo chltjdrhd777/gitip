@@ -1,7 +1,8 @@
 const { Select } = require('enquirer');
 
 import { ColorCode } from '@/constants/colors';
-import { PROCESS_EXIT } from '@/utils';
+import { MESSAGE } from '@/constants/message';
+import { cancel, PROCESS_EXIT } from '@/utils';
 
 export async function confirmToDeleteBranches() {
   const warningMessage = `\n⚠️ ${ColorCode.yellow(
@@ -27,5 +28,9 @@ export async function confirmToDeleteBranches() {
     if (choice === abortChoice) {
       PROCESS_EXIT();
     }
-  } catch {}
+  } catch (error) {
+    cancel(error, {
+      forceCancel: true,
+    });
+  }
 }

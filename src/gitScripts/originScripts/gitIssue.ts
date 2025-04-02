@@ -7,6 +7,7 @@ import {
   inquireIssueBranchName,
   createIssueBranchName,
   createCheckRequiredVariablesExistErrorMessage,
+  cancel,
 } from '@/utils';
 
 import path from 'path';
@@ -96,9 +97,11 @@ const ISSUE_TEMPLATE_PATH = path.join(cwd(), '.github', 'ISSUE_TEMPLATE');
       const { issueNumber } = createIssueResult;
       exec(`git checkout -b ${createIssueBranchName({ issueBranchName, issueNumber })}`);
     }
-  } catch (err) {
+  } catch (error) {
+    cancel(error);
+
     if (process.env.NODE_ENV === 'test') {
-      console.log('\n🚫 Failed to create github issue', err);
+      console.log('\n🚫 Failed to create github issue', error);
     }
   }
 })();

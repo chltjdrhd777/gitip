@@ -1,4 +1,4 @@
-import { sleep } from '@/utils';
+import { cancel, sleep } from '@/utils';
 
 import extractIssueBranches from '@/service/github-service/extractIssueBranches';
 import fetchBranch, { createFetchBranchErrorMessage } from '@/service/github-service/fetchBranch';
@@ -19,45 +19,49 @@ const REPO_NAME = process.env.REPO_NAME;
 const CLEANUP_SUCCESS_MESSAGE = '\n🧽 all cleanup process is finished';
 
 (async () => {
-  checkCurrentBranchIsIssueBranch();
+  try {
+    checkCurrentBranchIsIssueBranch();
 
-  await confirmToDeleteBranches();
+    await confirmToDeleteBranches();
 
-  const spinner = ora('\n🕖 please wait for cleaning\n\n').start();
-  await sleep(1000);
+    const spinner = ora('\n🕖 please wait for cleaning\n\n').start();
+    await sleep(1000);
 
-  //1. find remote alias for fork repository
-  const originRepoRemoteAlias = findRemoteAlias(`${ORIGIN_REPO_OWNER}/${REPO_NAME}`, {
-    onError: () => console.error(createFindRemoteAliasErrorMessage({ targetRepo: 'origin' })),
-  });
+    //1. find remote alias for fork repository
+    const originRepoRemoteAlias = findRemoteAlias(`${ORIGIN_REPO_OWNER}/${REPO_NAME}`, {
+      onError: () => console.error(createFindRemoteAliasErrorMessage({ targetRepo: 'origin' })),
+    });
 
-  //2. fetch branches from fork repository (remove unused branches from local by --prune flag)
-  fetchBranch(
-    { remoteAlias: originRepoRemoteAlias },
-    {
-      onError: () => console.error(createFetchBranchErrorMessage({ remoteAlias: originRepoRemoteAlias })),
-    },
-  );
+    //2. fetch branches from fork repository (remove unused branches from local by --prune flag)
+    fetchBranch(
+      { remoteAlias: originRepoRemoteAlias },
+      {
+        onError: () => console.error(createFetchBranchErrorMessage({ remoteAlias: originRepoRemoteAlias })),
+      },
+    );
 
-  //3. delete all local issue branches (if exists)
-  const allLocalIssueBranches = extractIssueBranches(
-    { type: 'local' },
-    {
-      onSuccess: () => spinner.stop(),
-    },
-  );
-  deleteLocalBranches(allLocalIssueBranches);
+    //3. delete all local issue branches (if exists)
+    const allLocalIssueBranches = extractIssueBranches(
+      { type: 'local' },
+      {
+        onSuccess: () => spinner.stop(),
+      },
+    );
+    deleteLocalBranches(allLocalIssueBranches);
 
-  //4. delete all remote issue branches (if exists)
-  const allRemoteIssueBranches = extractIssueBranches(
-    { type: 'remote', remoteAlias: originRepoRemoteAlias },
-    {
-      onSuccess: () => spinner.stop(),
-      replacer: (branchName) => branchName.replace(`${originRepoRemoteAlias}/`, ''),
-    },
-  );
-  deleteRemoteBranches(allRemoteIssueBranches, originRepoRemoteAlias);
+    //4. delete all remote issue branches (if exists)
+    const allRemoteIssueBranches = extractIssueBranches(
+      { type: 'remote', remoteAlias: originRepoRemoteAlias },
+      {
+        onSuccess: () => spinner.stop(),
+        replacer: (branchName) => branchName.replace(`${originRepoRemoteAlias}/`, ''),
+      },
+    );
+    deleteRemoteBranches(allRemoteIssueBranches, originRepoRemoteAlias);
 
-  spinner.stop();
-  console.log(CLEANUP_SUCCESS_MESSAGE);
+    spinner.stop();
+    console.log(CLEANUP_SUCCESS_MESSAGE);
+  } catch (error) {
+    cancel(error);
+  }
 })();
