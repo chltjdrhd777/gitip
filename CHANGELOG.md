@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.7.3](https://github.com/chltjdrhd777/gitip/compare/v1.7.2...v1.7.3) (2025-04-27)
+
+
+### Bug Fixes
+
+* update the error message of sync command ([cfae657](https://github.com/chltjdrhd777/gitip/commit/cfae65774e316f68c0b28ea9710e28e37c9e5b5c))
+
 ### [1.7.2](https://github.com/chltjdrhd777/gitip/compare/v1.7.1...v1.7.2) (2025-04-02)
 
 
