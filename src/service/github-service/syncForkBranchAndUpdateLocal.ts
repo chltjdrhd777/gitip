@@ -73,7 +73,10 @@ export function syncForkBranchAndUpdateLocal({
           onSuccess: () => {
             log(debug, () => createSwitchBranchSuccessMessage({ branchName: syncTargetBranch }));
           },
-          onError: () => console.error(() => createSwitchBranchErrorMessage({ branchName: syncTargetBranch })),
+          onError: (error) => {
+            console.error(createSwitchBranchErrorMessage({ branchName: syncTargetBranch }));
+            console.error(error);
+          },
           execSyncOptions: {
             stdio: 'ignore',
           },
