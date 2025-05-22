@@ -1,6 +1,6 @@
 {
-  "name": "git-issue-pr",
-  "version": "1.8.1",
+  "name": "gitip",
+  "version": "1.8.2",
   "description": "Automatically generate Git issues and pull requests for your workflow",
   "main": "./dist/index.js",
   "scripts": {
