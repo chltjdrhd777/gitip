@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.8.0](https://github.com/chltjdrhd777/gitip/compare/v1.7.3...v1.8.0) (2025-05-22)
+
+
+### Features
+
+* sync command in origin command mode ([0ee9605](https://github.com/chltjdrhd777/gitip/commit/0ee960586b425ad0f5dfbe4fa42846e5e17a9b0b))
+
 ### [1.7.3](https://github.com/chltjdrhd777/gitip/compare/v1.7.2...v1.7.3) (2025-04-27)
 
 
