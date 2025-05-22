@@ -1,7 +1,7 @@
 {
-  "name": "gitip",
+  "name": "git-issue-pr",
   "version": "1.8.0",
-  "description": "auto generate git issue and pull request",
+  "description": "Automatically generate Git issues and pull requests for your workflow",
   "main": "./dist/index.js",
   "scripts": {
     "dev": "cross-env NODE_ENV=development ts-node ./src/index.ts",
@@ -20,7 +20,22 @@
   "keywords": [
     "git",
     "issue",
-    "pull request"
+    "pull request",
+    "automated git",
+    "github issues",
+    "github pull requests",
+    "workflow automation",
+    "git automation",
+    "issue generator",
+    "PR generator",
+    "github tools",
+    "collaboration",
+    "team collaboration",
+    "version control",
+    "git workflow",
+    "git convention",
+    "commit convention",
+    "coding convention"
   ],
   "homepage": "https://github.com/chltjdrhd777/gitip",
   "bugs": {
