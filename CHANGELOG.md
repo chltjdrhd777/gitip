@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.8.5](https://github.com/chltjdrhd777/gitip/compare/v1.8.1...v1.8.5) (2025-07-04)
+
+
+### Bug Fixes
+
+* change package name for SEO ([90404b9](https://github.com/chltjdrhd777/gitip/commit/90404b9f7a2c71b3aea016facbcba5383d6b1159))
+* rollback the name to gitip again ([13aafae](https://github.com/chltjdrhd777/gitip/commit/13aafaee207864f63e95a7ff09fd6d7bcf666a2d))
+
 ### [1.8.1](https://github.com/chltjdrhd777/gitip/compare/v1.8.0...v1.8.1) (2025-05-22)
 
 ## [1.8.0](https://github.com/chltjdrhd777/gitip/compare/v1.7.3...v1.8.0) (2025-05-22)
