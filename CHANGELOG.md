@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.8.6](https://github.com/chltjdrhd777/gitip/compare/v1.8.5...v1.8.6) (2025-07-04)
+
 ### [1.8.5](https://github.com/chltjdrhd777/gitip/compare/v1.8.1...v1.8.5) (2025-07-04)
 
 
