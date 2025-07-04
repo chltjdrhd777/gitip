@@ -1,4 +1,5 @@
 import { COLORS } from '@/constants/colors';
+import { getPrefixEmoji } from '@/utils/pr-utils';
 
 interface CreateGitHubIssue {
   issueTemplate: string | null;
@@ -13,8 +14,10 @@ export async function createGitHubIssue(createGitHubIssue: CreateGitHubIssue) {
   const { issueTemplate, issueTitle, TEMPLATE_TITLE_PLACEHOLDER, TARGET_REPO_OWNER, GIT_API_URL, GIT_ACCESS_TOKEN } =
     createGitHubIssue;
 
+  const emoji = getPrefixEmoji(issueTitle);
+
   // default body
-  let requestBody: { [key: string]: string } = { title: issueTitle };
+  let requestBody: { [key: string]: string } = { title: `${emoji ? `${emoji} ` : ''}${issueTitle}` };
 
   if (issueTemplate && TEMPLATE_TITLE_PLACEHOLDER) {
     // separate markdown

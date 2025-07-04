@@ -101,7 +101,8 @@ export function syncForkBranchAndUpdateLocal({
     });
 
     // Push updates to the forked repository
-    executeCommand(`git push --force-with-lease ${forkRepoRemoteAlias} ${syncTargetBranch}`, {
+    // TODO: --force-with-lease vs --force
+    executeCommand(`git push --force ${forkRepoRemoteAlias} ${syncTargetBranch}`, {
       onSuccess: () => {
         log(debug, () => console.log(`✅ Pushed updates to ${forkRepoRemoteAlias}/${syncTargetBranch}.`));
       },
