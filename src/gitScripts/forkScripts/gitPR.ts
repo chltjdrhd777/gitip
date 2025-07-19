@@ -15,8 +15,8 @@ import {
 import checkExistingPR from '@/service/github-service/checkExistingPR';
 
 import {
+  cancel,
   checkRequiredVariablesExist,
-  loadEnv,
   createCheckRequiredVariablesExistErrorMessage,
   PROCESS_EXIT,
 } from '@/utils';
@@ -25,9 +25,7 @@ import { askToUpdateExistingPR } from '@/utils/pr-utils/askToUpdateExistingPR';
 import { assignPRToUser } from '@/utils/pr-utils/assignPRToUser';
 import { createGitHubPR } from '@/service/github-service';
 
-//PREREQUISITE
-loadEnv();
-
+/**@PRE_REQUISITE */
 const GIT_ACCESS_TOKEN = process.env.GIT_ACCESS_TOKEN;
 const UPSTREAM_REPO_OWNER = process.env.UPSTREAM_REPO_OWNER;
 const FORK_REPO_OWNER = process.env.FORK_REPO_OWNER;
@@ -146,9 +144,11 @@ const GIT_API_URL = `https://api.github.com/repos/${UPSTREAM_REPO_OWNER}/${REPO_
         GIT_ACCESS_TOKEN,
       });
     }
-  } catch (err) {
+  } catch (error) {
+    cancel(error);
+
     if (process.env.NODE_ENV === 'test') {
-      console.log('\n🚫 Failed to create github pull request', err);
+      console.log('\n🚫 Failed to create github pull request', error);
     }
   }
 })();

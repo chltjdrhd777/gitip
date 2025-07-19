@@ -1,7 +1,7 @@
 {
   "name": "gitip",
-  "version": "1.4.4",
-  "description": "auto generate git issue and pull request",
+  "version": "1.8.6",
+  "description": "Automatically generate Git issues and pull requests for your workflow",
   "main": "./dist/index.js",
   "scripts": {
     "dev": "cross-env NODE_ENV=development ts-node ./src/index.ts",
@@ -20,7 +20,22 @@
   "keywords": [
     "git",
     "issue",
-    "pull request"
+    "pull request",
+    "automated git",
+    "github issues",
+    "github pull requests",
+    "workflow automation",
+    "git automation",
+    "issue generator",
+    "PR generator",
+    "github tools",
+    "collaboration",
+    "team collaboration",
+    "version control",
+    "git workflow",
+    "git convention",
+    "commit convention",
+    "coding convention"
   ],
   "homepage": "https://github.com/chltjdrhd777/gitip",
   "bugs": {
@@ -32,12 +47,14 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "@types/cli-progress": "^3.11.5",
-    "@types/node": "^20.11.30",
     "@commitlint/cli": "^19.6.1",
     "@commitlint/config-conventional": "^19.6.0",
+    "@eslint/compat": "^1.2.5",
+    "@types/cli-progress": "^3.11.5",
+    "@types/node": "^20.11.30",
     "commitlint-plugin-function-rules": "^4.0.1",
     "cross-env": "^7.0.3",
+    "eslint": "^9.19.0",
     "eslint-plugin-import": "^2.29.1",
     "standard-version": "^9.5.0",
     "ts-node": "^10.9.2",

@@ -7,7 +7,7 @@ import {
   inquireIssueBranchName,
   createIssueBranchName,
   createCheckRequiredVariablesExistErrorMessage,
-  loadEnv,
+  cancel,
 } from '@/utils';
 
 import path from 'path';
@@ -23,8 +23,6 @@ import {
 import fetchBranch, { createFetchBranchErrorMessage } from '@/service/github-service/fetchBranch';
 
 /**@PRE_REQUISITE */
-loadEnv();
-
 const GIT_ACCESS_TOKEN = process.env.GIT_ACCESS_TOKEN;
 const ORIGIN_REPO_OWNER = process.env.ORIGIN_REPO_OWNER;
 const REPO_NAME = process.env.REPO_NAME;
@@ -52,12 +50,12 @@ const ISSUE_TEMPLATE_PATH = path.join(cwd(), '.github', 'ISSUE_TEMPLATE');
       },
     );
 
-    //2. checkout to feature branch on local machine
+    //2. checkout to DEFAULT_BRANCH_NAME branch on local machine
     await checkoutToTargetBranch(DEFAULT_BRANCH_NAME as string, {
       onError: () => console.error(createCheckoutToTargetBranchErrorMessage({ branchName: DEFAULT_BRANCH_NAME })),
     });
 
-    //3. check upstream repository remote alias
+    //3. check DEFAULT_BRANCH_NAME repository remote alias
     findRemoteAlias(`${ORIGIN_REPO_OWNER}/${REPO_NAME}`, {
       onSuccess: (remoteAlias) => {
         fetchBranch(
@@ -67,7 +65,7 @@ const ISSUE_TEMPLATE_PATH = path.join(cwd(), '.github', 'ISSUE_TEMPLATE');
           },
         );
       },
-      onError: () => console.error(createFindRemoteAliasErrorMessage({ targetRepo: 'upstream' })),
+      onError: () => console.error(createFindRemoteAliasErrorMessage({ targetRepo: 'origin' })),
     });
 
     /**
@@ -99,9 +97,11 @@ const ISSUE_TEMPLATE_PATH = path.join(cwd(), '.github', 'ISSUE_TEMPLATE');
       const { issueNumber } = createIssueResult;
       exec(`git checkout -b ${createIssueBranchName({ issueBranchName, issueNumber })}`);
     }
-  } catch (err) {
+  } catch (error) {
+    cancel(error);
+
     if (process.env.NODE_ENV === 'test') {
-      console.log('\n🚫 Failed to create github issue', err);
+      console.log('\n🚫 Failed to create github issue', error);
     }
   }
 })();

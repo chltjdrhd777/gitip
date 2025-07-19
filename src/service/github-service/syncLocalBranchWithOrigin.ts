@@ -7,16 +7,14 @@ import switchBranch, { createSwitchBranchErrorMessage, createSwitchBranchSuccess
 import { createCurrentBranchNameErrorMessage, getCurrentBranchName } from './getCurrentBranchName';
 
 interface SyncForkBranchParams {
-  UPSTREAM_REPO_OWNER?: string;
-  FORK_REPO_OWNER?: string;
+  ORIGIN_REPO_OWNER?: string;
   REPO_NAME?: string;
   syncTargetBranch?: string;
   config?: DefaultConfig;
 }
 
-export function syncForkBranchAndUpdateLocal({
-  UPSTREAM_REPO_OWNER,
-  FORK_REPO_OWNER,
+export function syncLocalBranchWithOrigin({
+  ORIGIN_REPO_OWNER,
   REPO_NAME,
   syncTargetBranch,
   config = {},
@@ -24,23 +22,10 @@ export function syncForkBranchAndUpdateLocal({
   const { debug = true } = config;
 
   try {
-    const forkRepoRemoteAlias = findRemoteAlias(`${FORK_REPO_OWNER}/${REPO_NAME}`, {
+    const originRepoRemoteAlias = findRemoteAlias(`${ORIGIN_REPO_OWNER}/${REPO_NAME}`, {
       onError: () => {
         console.error(
-          `\n🚫 Failed to find remote alias for the fork repository: ${UPSTREAM_REPO_OWNER}/${REPO_NAME}. Please add it first.\n` +
-            `👉 To add the fork repository remote, run the following command:\n` +
-            `\n` +
-            `   💻 git remote add "fork_repo_remote_alias" "fork_repo_url"\n` +
-            `\n` +
-            `🔗 This will allow you to fetch updates from the upstream repository.\n`,
-        );
-      },
-    });
-
-    const upstreamRepoRemoteAlias = findRemoteAlias(`${UPSTREAM_REPO_OWNER}/${REPO_NAME}`, {
-      onError: () => {
-        console.error(
-          `\n🚫 Failed to find remote alias for the upstream repository: ${UPSTREAM_REPO_OWNER}/${REPO_NAME}. Please add it first.\n` +
+          `\n🚫 Failed to find remote alias for the upstream repository: ${ORIGIN_REPO_OWNER}/${REPO_NAME}. Please add it first.\n` +
             `👉 To add the upstream repository remote, run the following command:\n` +
             `\n` +
             `   💻 git remote add "upstream_repo_remote_alias" "upstream_repo_url"\n` +
@@ -52,12 +37,12 @@ export function syncForkBranchAndUpdateLocal({
 
     // Fetch updates from the upstream repository
     fetchBranch(
-      { remoteAlias: upstreamRepoRemoteAlias },
+      { remoteAlias: originRepoRemoteAlias },
       {
         onSuccess: () => {
-          log(debug, () => console.log(createFetchBranchSuccessMessage({ remoteAlias: upstreamRepoRemoteAlias })));
+          log(debug, () => console.log(createFetchBranchSuccessMessage({ remoteAlias: originRepoRemoteAlias })));
         },
-        onError: () => console.error(createFetchBranchErrorMessage({ remoteAlias: upstreamRepoRemoteAlias })),
+        onError: () => console.error(createFetchBranchErrorMessage({ remoteAlias: originRepoRemoteAlias })),
         execSyncOptions: {
           stdio: 'ignore',
         },
@@ -84,30 +69,15 @@ export function syncForkBranchAndUpdateLocal({
       );
     }
 
-    // Pull updates from the upstream branch
-    executeCommand(`git pull ${upstreamRepoRemoteAlias} ${syncTargetBranch}`, {
+    // merge branch
+    executeCommand(`git merge ${originRepoRemoteAlias}/${syncTargetBranch}`, {
       onSuccess: () => {
-        log(debug, () => console.log(`✅ Pulled updates from ${upstreamRepoRemoteAlias}/${syncTargetBranch}.`));
+        log(debug, () => console.log(`✅ Merged ${ORIGIN_REPO_OWNER}/${syncTargetBranch}.`));
       },
       onError: (error) => {
         console.error(
-          `\n🚫 Failed to pull: ${syncTargetBranch} when synchronizing with ${upstreamRepoRemoteAlias}.\nPlease commit your changes or stash them before you merge.\nAborting`,
+          `\n🚫 Failed to merge: ${syncTargetBranch} when synchronizing with ${originRepoRemoteAlias}.\nPlease commit your changes or stash them before you merge.\nAborting`,
         );
-        console.error(error);
-      },
-      execSyncOptions: {
-        stdio: 'ignore',
-      },
-    });
-
-    // Push updates to the forked repository
-    // TODO: --force-with-lease vs --force
-    executeCommand(`git push --force ${forkRepoRemoteAlias} ${syncTargetBranch}`, {
-      onSuccess: () => {
-        log(debug, () => console.log(`✅ Pushed updates to ${forkRepoRemoteAlias}/${syncTargetBranch}.`));
-      },
-      onError: (error) => {
-        console.error(`\n🚫 Failed to push: ${syncTargetBranch} when synchronizing with ${forkRepoRemoteAlias}.`);
         console.error(error);
       },
       execSyncOptions: {

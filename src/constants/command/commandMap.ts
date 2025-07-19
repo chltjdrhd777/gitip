@@ -20,6 +20,7 @@ const originRepoCommandStore = new CommandStore().addCommands([
   new Command(`${white('[issue]')} create an issue`, './gitScripts/originScripts/gitIssue.js'),
   new Command(`${white('[pr]')} create a pull request`, './gitScripts/originScripts/gitPR.js'),
   new Command(`${white('[clean]')} clean issue branches`, './gitScripts/originScripts/cleanIssueBranches.js'),
+  new Command(`${white('[sync]')} sync branches`, './gitScripts/originScripts/syncBranch.js'),
 ]);
 
 export { forkRepoCommandStore, originRepoCommandStore };

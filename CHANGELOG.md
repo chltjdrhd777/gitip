@@ -2,6 +2,137 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.8.6](https://github.com/chltjdrhd777/gitip/compare/v1.8.5...v1.8.6) (2025-07-04)
+
+### [1.8.5](https://github.com/chltjdrhd777/gitip/compare/v1.8.1...v1.8.5) (2025-07-04)
+
+
+### Bug Fixes
+
+* change package name for SEO ([90404b9](https://github.com/chltjdrhd777/gitip/commit/90404b9f7a2c71b3aea016facbcba5383d6b1159))
+* rollback the name to gitip again ([13aafae](https://github.com/chltjdrhd777/gitip/commit/13aafaee207864f63e95a7ff09fd6d7bcf666a2d))
+
+### [1.8.1](https://github.com/chltjdrhd777/gitip/compare/v1.8.0...v1.8.1) (2025-05-22)
+
+## [1.8.0](https://github.com/chltjdrhd777/gitip/compare/v1.7.3...v1.8.0) (2025-05-22)
+
+
+### Features
+
+* sync command in origin command mode ([0ee9605](https://github.com/chltjdrhd777/gitip/commit/0ee960586b425ad0f5dfbe4fa42846e5e17a9b0b))
+
+### [1.7.3](https://github.com/chltjdrhd777/gitip/compare/v1.7.2...v1.7.3) (2025-04-27)
+
+
+### Bug Fixes
+
+* update the error message of sync command ([cfae657](https://github.com/chltjdrhd777/gitip/commit/cfae65774e316f68c0b28ea9710e28e37c9e5b5c))
+
+### [1.7.2](https://github.com/chltjdrhd777/gitip/compare/v1.7.1...v1.7.2) (2025-04-02)
+
+
+### Bug Fixes
+
+* add cancel notification in sync command ([65a9b5b](https://github.com/chltjdrhd777/gitip/commit/65a9b5ba6642cb96c7100b547bf136530b5187cc))
+* handle the cancel error in try-catch block ([2c185ab](https://github.com/chltjdrhd777/gitip/commit/2c185ab61f1878407ed7d2c47a0378352c242a33))
+
+### [1.7.1](https://github.com/chltjdrhd777/gitip/compare/v1.7.0...v1.7.1) (2025-03-12)
+
+
+### Bug Fixes
+
+* check the pr title on the merge title ([9c7b988](https://github.com/chltjdrhd777/gitip/commit/9c7b988c014554aa3146a4617d0ca06fc5570ea0))
+
+## [1.7.0](https://github.com/chltjdrhd777/gitip/compare/v1.6.8...v1.7.0) (2025-02-13)
+
+
+### Features
+
+* add init command for creating base env file ([6c4ad5b](https://github.com/chltjdrhd777/gitip/commit/6c4ad5be7e97d53b30505e3ea4f105109f7b4012))
+
+### [1.6.8](https://github.com/chltjdrhd777/gitip/compare/v1.6.7...v1.6.8) (2025-02-03)
+
+
+### Bug Fixes
+
+* clean 명령어 로컬에 없는 upstream remote 를 지우려고 하는 시도 필터링 ([1f8ff24](https://github.com/chltjdrhd777/gitip/commit/1f8ff2485476d65f56a504e1ee23af495005a444))
+* sigint error handling ([6ec1621](https://github.com/chltjdrhd777/gitip/commit/6ec16217540ba769d71d4853fab2d2da19878a47))
+
+### [1.6.7](https://github.com/chltjdrhd777/gitip/compare/v1.6.6...v1.6.7) (2025-02-03)
+
+
+### Bug Fixes
+
+* sync 제대로 되지 않던 문제 수정 ([37a7e9e](https://github.com/chltjdrhd777/gitip/commit/37a7e9ec8f022e69d183fbbaed0dde37cb98a00b))
+
+### [1.6.6](https://github.com/chltjdrhd777/gitip/compare/v1.6.5...v1.6.6) (2025-01-28)
+
+
+### Bug Fixes
+
+* handle invalid issue branch name input ([7d65692](https://github.com/chltjdrhd777/gitip/commit/7d65692830b43b85f8c3cce1b0f433cba7677905))
+
+### [1.6.5](https://github.com/chltjdrhd777/gitip/compare/v1.6.4...v1.6.5) (2025-01-28)
+
+### [1.6.4](https://github.com/chltjdrhd777/gitip/compare/v1.6.3...v1.6.4) (2025-01-28)
+
+### [1.6.3](https://github.com/chltjdrhd777/gitip/compare/v1.6.2...v1.6.3) (2025-01-28)
+
+### [1.6.2](https://github.com/chltjdrhd777/gitip/compare/v1.6.1...v1.6.2) (2025-01-28)
+
+
+### Bug Fixes
+
+* create environment management store ([da0561d](https://github.com/chltjdrhd777/gitip/commit/da0561d16f8be31eb28860baa0643ab3fd25c438))
+* remove unused loadEnv function ([7db4926](https://github.com/chltjdrhd777/gitip/commit/7db4926fe74f9965ac9e03d50eacee9be8b57f37))
+
+### [1.6.1](https://github.com/chltjdrhd777/gitip/compare/v1.6.0...v1.6.1) (2025-01-27)
+
+
+### Bug Fixes
+
+* version command ([3daee29](https://github.com/chltjdrhd777/gitip/commit/3daee29f80bd1352548a4d3bbf13cf88906d7803))
+
+## [1.6.0](https://github.com/chltjdrhd777/gitip/compare/v1.5.3...v1.6.0) (2025-01-27)
+
+
+### Features
+
+* add git-diff cheeck utility ([c8b1fe3](https://github.com/chltjdrhd777/gitip/commit/c8b1fe30396f338f37631c125aaa76d3fb0c847c))
+
+
+### Bug Fixes
+
+* migration eslint setting ([9f7ee00](https://github.com/chltjdrhd777/gitip/commit/9f7ee00ec7614271d8f2bd92a33488530d940e00))
+
+### [1.5.3](https://github.com/chltjdrhd777/gitip/compare/v1.5.2...v1.5.3) (2025-01-26)
+
+### [1.5.2](https://github.com/chltjdrhd777/gitip/compare/v1.5.1...v1.5.2) (2025-01-26)
+
+
+### Bug Fixes
+
+* check before clean ([fe762d0](https://github.com/chltjdrhd777/gitip/commit/fe762d08f325951cc4996a4b08f59bcf7d815b3a))
+
+### [1.5.1](https://github.com/chltjdrhd777/gitip/compare/v1.5.0...v1.5.1) (2025-01-26)
+
+
+### Bug Fixes
+
+* add console for clean branch ([a8c547f](https://github.com/chltjdrhd777/gitip/commit/a8c547ff40412c77913f83ddd5c8086035701b4c))
+
+## [1.5.0](https://github.com/chltjdrhd777/gitip/compare/v1.4.4...v1.5.0) (2025-01-26)
+
+
+### Features
+
+* add commandline for shortcutt ([b6db525](https://github.com/chltjdrhd777/gitip/commit/b6db5259af4352809a1dae1577b291ece2f947c9))
+
+
+### Bug Fixes
+
+* update version for publishment ([be93ba2](https://github.com/chltjdrhd777/gitip/commit/be93ba285a789488f4b2196058bdefde7aec51ff))
+
 ### [1.4.4](https://github.com/chltjdrhd777/gitip/compare/v1.4.3...v1.4.4) (2025-01-26)
 
 

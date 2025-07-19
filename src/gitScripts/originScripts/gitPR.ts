@@ -11,14 +11,12 @@ import {
   getLatestCommitMetadataErrorMessage,
   pushToTargetBranch,
 } from '@/service';
-import { checkRequiredVariablesExist, loadEnv, createCheckRequiredVariablesExistErrorMessage } from '@/utils';
+import { cancel, checkRequiredVariablesExist, createCheckRequiredVariablesExistErrorMessage } from '@/utils';
 import { getPRBody, getPRTitle, getPrefixEmoji, inquirePRTitle } from '@/utils/pr-utils';
 import { assignPRToUser } from '@/utils/pr-utils/assignPRToUser';
 import { createGitHubPR } from '@/service/github-service';
 
-//PREREQUISITE
-loadEnv();
-
+/**@PRE_REQUISITE */
 const GIT_ACCESS_TOKEN = process.env.GIT_ACCESS_TOKEN;
 const ORIGIN_REPO_OWNER = process.env.ORIGIN_REPO_OWNER;
 const REPO_NAME = process.env.REPO_NAME;
@@ -101,9 +99,11 @@ const GIT_API_URL = `https://api.github.com/repos/${ORIGIN_REPO_OWNER}/${REPO_NA
         GIT_ACCESS_TOKEN,
       });
     }
-  } catch (err) {
+  } catch (error) {
+    cancel(error);
+
     if (process.env.NODE_ENV === 'test') {
-      console.log('\n🚫 Failed to create github pull request', err);
+      console.log('\n🚫 Failed to create github pull request', error);
     }
   }
 })();

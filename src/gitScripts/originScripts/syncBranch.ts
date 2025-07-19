@@ -2,20 +2,19 @@ const ora = require('ora-classic');
 
 import { MESSAGE } from '@/constants/message';
 import { getBranchList, syncForkBranchAndUpdateLocal } from '@/service';
+import { syncLocalBranchWithOrigin } from '@/service/github-service/syncLocalBranchWithOrigin';
 import { cancel, checkRequiredVariablesExist, sleep } from '@/utils';
 
 import select from '@inquirer/select';
 
 /**@PRE_REQUISITE */
-const UPSTREAM_REPO_OWNER = process.env.UPSTREAM_REPO_OWNER;
-const FORK_REPO_OWNER = process.env.FORK_REPO_OWNER;
+const ORIGIN_REPO_OWNER = process.env.ORIGIN_REPO_OWNER;
 const REPO_NAME = process.env.REPO_NAME;
 
 (async () => {
   try {
     const isExistRequiredVars = checkRequiredVariablesExist({
-      UPSTREAM_REPO_OWNER,
-      FORK_REPO_OWNER,
+      ORIGIN_REPO_OWNER,
       REPO_NAME,
     });
     if (!isExistRequiredVars.status) {
@@ -31,14 +30,10 @@ const REPO_NAME = process.env.REPO_NAME;
     const spinner = ora('please wait for cleaning...').start();
     await sleep(1000);
 
-    syncForkBranchAndUpdateLocal({
-      UPSTREAM_REPO_OWNER,
-      FORK_REPO_OWNER,
+    syncLocalBranchWithOrigin({
+      ORIGIN_REPO_OWNER,
       REPO_NAME,
       syncTargetBranch: targetBranch,
-      config: {
-        onSuccess: () => console.log('✅ done'),
-      },
     });
 
     spinner.stop();

@@ -1,14 +1,13 @@
 import {
   checkRequiredVariablesExist,
-  loadEnv,
   inquireIssueType,
   inquireIssueTitle,
   getIssueTemplate,
   replaceTitlePlaceholder,
   inquireIssueBranchName,
-  sleep,
   createIssueBranchName,
   createCheckRequiredVariablesExistErrorMessage,
+  cancel,
 } from '@/utils';
 
 import path from 'path';
@@ -26,8 +25,6 @@ import {
 const ora = require('ora-classic');
 
 /**@PRE_REQUISITE */
-loadEnv();
-
 const GIT_ACCESS_TOKEN = process.env.GIT_ACCESS_TOKEN;
 const UPSTREAM_REPO_OWNER = process.env.UPSTREAM_REPO_OWNER;
 const FORK_REPO_OWNER = process.env.FORK_REPO_OWNER;
@@ -69,7 +66,6 @@ const ISSUE_TEMPLATE_PATH = path.join(cwd(), '.github', 'ISSUE_TEMPLATE');
 
     //4. sync fork branch with remote original branch and update local branch
     const spinner = ora(`🕹 syncing fork branch with upstream...`).start();
-    await sleep(500);
 
     syncForkBranchAndUpdateLocal({
       UPSTREAM_REPO_OWNER,
@@ -113,9 +109,11 @@ const ISSUE_TEMPLATE_PATH = path.join(cwd(), '.github', 'ISSUE_TEMPLATE');
       const { issueNumber } = createIssueResult;
       exec(`git checkout -b ${createIssueBranchName({ issueBranchName, issueNumber })}`);
     }
-  } catch (err) {
+  } catch (error) {
+    cancel(error);
+
     if (process.env.NODE_ENV === 'test') {
-      console.log('\n🚫 Failed to create github issue', err);
+      console.log('\n🚫 Failed to create github issue', error);
     }
   }
 })();

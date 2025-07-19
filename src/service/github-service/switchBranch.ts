@@ -26,7 +26,7 @@ export default function switchBranch(switchBranchParams: SwitchBranchParams, swi
 }
 
 export function createSwitchBranchErrorMessage({ branchName }: { branchName?: string }) {
-  return `\n🚫 Failed to switch branch: ${branchName}. check your local branch list first`;
+  return `\n🚫 Failed to switch branch: ${branchName}. check your local branch list & git status`;
 }
 export function createSwitchBranchSuccessMessage({ branchName }: { branchName?: string }) {
   return `\n✅ switched branch: ${branchName}`;

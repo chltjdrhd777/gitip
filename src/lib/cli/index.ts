@@ -1,8 +1,9 @@
 import { Command } from 'commander';
-import { showVersion } from './versionHandler';
-import { PROCESS_EXIT } from '@/utils';
+import { getVersion, showVersion } from './versionHandler';
 import { GitipCommandType } from '@/types';
 import { forkRepoHandler, originRepoHandler } from './repoHandler';
+import { envStore } from '@/service/environment';
+import { ColorCode } from '@/constants/colors';
 
 export class GitipCLIController {
   private program: Command = new Command().name('gitip-cli');
@@ -17,20 +18,22 @@ export class GitipCLIController {
     this.setHelpCommand();
 
     this.setDefaultAction();
+    this.setInitCommand();
     this.setIssueCommand();
     this.setPullRequestCommand();
     this.setSyncCommand();
     this.setCleanCommand();
   }
 
-  private setVersionCommand() {
-    const actionHandler = () => {
-      showVersion();
-      PROCESS_EXIT();
-    };
+  private printMode() {
+    const isOrigin = envStore.hasOriginFlag();
 
-    this.program.option('-v, --version', 'Display the current version').action(actionHandler);
-    this.program.version('-v, --version', 'Display the current version').action(actionHandler);
+    console.log(`\n🔍 ${ColorCode.magenta('[Current mode]')}: ${ColorCode.white(isOrigin ? 'origin' : 'fork')}\n`);
+  }
+
+  private setVersionCommand() {
+    this.program.command('version').description('Show the current version').action(showVersion);
+    this.program.version(`🔔 Version: ${getVersion()}`, '-v, --version', 'Display the current version');
   }
 
   private setHelpCommand() {
@@ -43,11 +46,24 @@ export class GitipCLIController {
   }
 
   private setDefaultAction() {
-    const defaultActionHandler = async (flagOptions: Record<string, any>) => {
-      flagOptions.origin ? await originRepoHandler.run() : await forkRepoHandler.run();
+    const defaultActionHandler = async () => {
+      envStore.load();
+
+      const isOrigin = envStore.hasOriginFlag();
+
+      this.printMode();
+
+      isOrigin ? await originRepoHandler.run() : await forkRepoHandler.run();
     };
 
-    this.program.option('-o, --origin', 'Handle origin repository').action(defaultActionHandler);
+    this.program.action(defaultActionHandler);
+  }
+
+  private setInitCommand() {
+    this.program
+      .command('init')
+      .description('Initialize .env file with required environment variables')
+      .action(envStore.init);
   }
 
   private setIssueCommand() {
@@ -68,13 +84,16 @@ export class GitipCLIController {
 
   /** helpers */
   private parseArgs = () => this.program.parse(process.argv);
-  private getOptionValues = () => this.program.opts();
 
   private mountCommand = (commandType: GitipCommandType, commandList: string[]) => {
     const actionHandler = async () => {
-      const flagOptions = this.getOptionValues();
+      envStore.load();
 
-      flagOptions.origin ? await originRepoHandler.run(commandType) : await forkRepoHandler.run(commandType);
+      const isOrigin = envStore.hasOriginFlag();
+
+      this.printMode();
+
+      isOrigin ? await originRepoHandler.run(commandType) : await forkRepoHandler.run(commandType);
     };
 
     commandList.forEach((command) => {

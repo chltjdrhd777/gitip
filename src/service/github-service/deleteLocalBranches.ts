@@ -1,9 +1,22 @@
-import { executeCommand } from '@/utils';
+import { executeCommand, PROCESS_EXIT } from '@/utils';
 
 export function deleteLocalBranches(localBranchNames: string[]) {
   if (!localBranchNames.length) return;
 
-  localBranchNames.forEach((branchName) => {
-    executeCommand(`git branch -D ${branchName}`, { exitWhenError: false });
-  });
+  try {
+    localBranchNames.forEach((branchName) => {
+      executeCommand(`git branch -D ${branchName}`, {
+        exitWhenError: false,
+      });
+    });
+
+    return deleteLocalBranches;
+  } catch {
+    createDeleteLocalBranchesErrorMessage();
+    PROCESS_EXIT();
+  }
+}
+
+export function createDeleteLocalBranchesErrorMessage() {
+  return `\n🚫 Failed to delete local branches`;
 }
